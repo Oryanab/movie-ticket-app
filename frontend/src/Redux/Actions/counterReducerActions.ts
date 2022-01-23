@@ -1,8 +1,8 @@
-import { CounterReducerActionTypes } from '../Types/counterReducerTypes';
+import { CounterReducerActions, CounterReducerActionTypes } from '../Types/counterReducerTypes';
 import { Dispatch } from 'redux';
 
 export const increment = (amount: number) => {
-  return (dispatch: Dispatch) => {
+  return (dispatch: Dispatch<CounterReducerActions>) => {
     dispatch({
       type: CounterReducerActionTypes.INCREMENT,
       payload: amount,
@@ -13,7 +13,7 @@ export const increment = (amount: number) => {
 export const decrement = (amount: number) => {
   return (dispatch: Dispatch) => {
     dispatch({
-      type: CounterReducerActionTypes.INCREMENT,
+      type: CounterReducerActionTypes.DECREMENT,
       payload: amount,
     });
   };

@@ -37,3 +37,5 @@
    }
 7. npm i redux react-redux react-thunk
 8. npm i --save-dev @types/react-redux @types/redux-thunk
+9. npm install react-bootstrap
+10. npm install --save-dev @types/react-bootstrap

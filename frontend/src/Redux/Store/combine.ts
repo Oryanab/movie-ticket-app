@@ -1,8 +1,13 @@
-import { combineReducers } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import counterReducer from '../Reducers/counterReducer';
+import studentsReducer from '../Reducers/studentsReducer';
 
-const appReducers = combineReducers({
+export const appReducers = combineReducers({
   counter: counterReducer,
+  students: studentsReducer,
 });
 
-export default appReducers;
+const store = createStore(appReducers, {}, applyMiddleware(thunk));
+
+export default store;
