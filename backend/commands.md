@@ -63,3 +63,4 @@
 14. npm install --save-dev nodemon
 15. package.json=>scripts=>{..."dev": "nodemon ./server/index.ts"}
 16. tsconfig => {... "resolveJsonModule": true}
+17. npm install --save-dev eslint-config-prettier
