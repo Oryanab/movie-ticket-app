@@ -1,6 +1,6 @@
 import { studentsReducerActions, Students, studentsReducerActionTypes } from '../Types/studentsReducerTypes';
-
-const studentsReducer = (state: Students[], action: studentsReducerActions) => {
+const initState: Students[] = [];
+const studentsReducer = (state: Students[] = initState, action: studentsReducerActions) => {
   switch (action.type) {
     case studentsReducerActionTypes.GET_STUDENTS:
       return (state = action.payload);

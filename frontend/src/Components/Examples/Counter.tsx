@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { counterActions } from '../Redux/CombineActions/counterActions';
-import { State } from '../Redux/Types/storeTypes';
+import { counterActions } from '../../Redux/CombineActions/counterActions';
+import { State } from '../../Redux/Types/storeTypes';
 
 export default function Counter() {
   const [incrementAmount, setIncrementAmount] = useState('');
@@ -21,7 +21,7 @@ export default function Counter() {
   };
   return (
     <div>
-      <Form style={{ display: 'flex', justifyContent: 'center', marginTop: '30vh' }}>
+      <Form style={{ display: 'flex', justifyContent: 'center', marginTop: '10vh' }}>
         <div>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Control
