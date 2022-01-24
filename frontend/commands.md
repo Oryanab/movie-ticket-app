@@ -1,5 +1,6 @@
 ### Commands Record:
 
+```
 1. npx create-react-app . --template typescript
 2. .eslintrc=> {
    "env": {
@@ -39,3 +40,4 @@
 8. npm i --save-dev @types/react-redux @types/redux-thunk
 9. npm install react-bootstrap bootstrap
 10. npm install --save-dev @types/react-bootstrap
+```

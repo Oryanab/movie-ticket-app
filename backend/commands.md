@@ -1,5 +1,6 @@
 ### Commands Record:
 
+```
 1. npm init -y
 2. npm install typescript --save-dev
 3. "scripts": {
@@ -64,3 +65,4 @@
 15. package.json=>scripts=>{..."dev": "nodemon ./server/index.ts"}
 16. tsconfig => {... "resolveJsonModule": true}
 17. npm install --save-dev eslint-config-prettier
+```
