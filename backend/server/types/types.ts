@@ -11,3 +11,30 @@ export enum Gender {
   Male = 'male',
   Female = 'female',
 }
+
+export interface Tickets {
+  full_name: String;
+  secret_key: String;
+  movie_id: String;
+  email: String;
+  movie_title: String;
+  sit: String;
+  price: Number;
+  movie_date: Date;
+  time_start: String;
+  purchase_date: Date;
+}
+
+export interface Movies {
+  id: String;
+  movie_title: String;
+  img: String;
+  trailer: String;
+  genres: Array<string>;
+  description: String;
+  price: Number;
+  movie_date: Date;
+  time_start: String;
+  available_sits: Array<string>;
+  taken_sits: Array<string>;
+}

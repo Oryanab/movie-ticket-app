@@ -4,19 +4,19 @@ require('dotenv').config();
 import mongoose from 'mongoose';
 import Student from '../schemas/studentSchema';
 import { Students } from '../types/types';
-import { middlewareServerError, middlewarePageNotFound } from '../api/middlewares/errorhandlers';
-const PORT = 4000;
+import { middlewareServerError, middlewarePageNotFound } from './middlewares/errorhandlers';
+const PORT = process.env.PORT || 4000;
 
-// start app
+// Start App
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(middlewareServerError);
 app.use(middlewarePageNotFound);
 
-// Connect to Db
+// Connect to MongoDb
 mongoose
-  .connect(process.env.MONGOURI!)
+  .connect(process.env.MONGO_URI!)
   .then(() => {
     console.log('connected');
   })
