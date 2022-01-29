@@ -1,5 +1,5 @@
 import { v4 as secretId } from 'uuid';
-import jwt, { Jwt, JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 require('dotenv').config();
 
 export const generateSecretKey = (): string => {

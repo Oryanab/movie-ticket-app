@@ -3,6 +3,9 @@ require('dotenv').config();
 import Ticket from '../../../schemas/ticketsSchema';
 import { Tickets } from '../../../types/types';
 import { generateSecretKey, generateVerificationKey } from '../../utils/tickets-route-utils';
+import { sendMailFn, mailVerificationContent } from '../../utils/send-email';
+import { VerificationEmail } from '../../../types/types';
+import { verificationKeyVerify } from '../../middlewares/ticketsRouterMiddlewares';
 
 // Start Router
 const router: Router = express.Router();
@@ -43,10 +46,12 @@ router.post('/add-ticket', async (_req: express.Request, res: express.Response) 
 });
 
 // Get verification by user full name and email
-router.post('/get-verification', async (_req: express.Request, res: express.Response) => {
+router.post('/get-verification', (_req: express.Request, res: express.Response) => {
   try {
     const { full_name, email } = _req.body;
     const verificationToken = generateVerificationKey(full_name, email);
+    const mailContent: VerificationEmail = mailVerificationContent(full_name, verificationToken);
+    sendMailFn(email, mailContent.subject, mailContent.text);
     // Send email
     res.status(200).json({ statusCode: 200, message: `Verification code was send to ${email}` });
   } catch (err) {
@@ -55,4 +60,9 @@ router.post('/get-verification', async (_req: express.Request, res: express.Resp
 });
 
 // Verify user full name and email
-router.post('/verify');
+router.post('/verify', verificationKeyVerify, (_req: express.Request, res: express.Response) => {
+  res.status(200).json({
+    statusCode: 200,
+    message: `You have successfully verified ${_req.body.email}, please continue purchasing your ticket`,
+  });
+});

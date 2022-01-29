@@ -1,6 +1,7 @@
 // Imports
 import * as nodemailer from 'nodemailer';
 import SMTPTransport = require('nodemailer/lib/smtp-transport');
+import { VerificationEmail } from '../../types/types';
 
 require('dotenv').config();
 
@@ -31,4 +32,15 @@ export const sendMailFn = (to: string, subject: string, text: string) => {
       return info;
     }
   });
+};
+
+export const mailVerificationContent = (verificationKey: string, full_name: string): VerificationEmail => {
+  const verificationMailContent: VerificationEmail = {
+    subject: `Dear ${full_name}, Here is your verification code`,
+    text: `Here is your verification code please copy and paste it in the instructed field,\n
+     hurry up, it will only be valid for the next 10 minutes. \n
+     verification key: ${verificationKey}`,
+  };
+
+  return verificationMailContent;
 };

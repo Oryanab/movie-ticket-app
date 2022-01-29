@@ -38,3 +38,8 @@ export interface Movies {
   available_sits: Array<string>;
   taken_sits: Array<string>;
 }
+
+export interface VerificationEmail {
+  subject: string;
+  text: string;
+}
