@@ -35,7 +35,7 @@ router.post('/add-ticket', async (_req: express.Request, res: express.Response) 
       movie_title,
       sit,
       price,
-      movie_date,
+      movie_date: new Date(movie_date),
       time_start,
       purchase_date: new Date(),
     });
@@ -63,8 +63,21 @@ router.post('/get-verification', (_req: express.Request, res: express.Response) 
 router.post('/verify', verificationKeyVerify, (_req: express.Request, res: express.Response) => {
   res.status(200).json({
     statusCode: 200,
-    message: `You have successfully verified ${_req.body.email}, please continue purchasing your ticket`,
+    message: `You have successfully verified ${_req.body.email}`,
   });
+});
+
+// User can change sit with his order secret_key
+router.put('/change-sit', verificationKeyVerify, async (_req: express.Request, res: express.Response) => {
+  try {
+    if (_req.verified) {
+      const { email, newSit, orderId } = _req.body;
+      await Ticket.findOneAndUpdate({ secret_key: orderId }, { sit: newSit });
+      res.status(200).json({ statusCode: 200, message: `Success, an updated receipt was sent to ${email}` });
+    }
+  } catch (err) {
+    res.status(500).json({ statusCode: 200, message: `Processed failed, please ty again later` });
+  }
 });
 
 export default router;
