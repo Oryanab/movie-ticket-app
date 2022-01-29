@@ -43,3 +43,11 @@ export interface VerificationEmail {
   subject: string;
   text: string;
 }
+
+declare global {
+  namespace Express {
+    export interface Request {
+      verified: Boolean;
+    }
+  }
+}

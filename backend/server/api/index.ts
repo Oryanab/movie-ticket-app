@@ -6,6 +6,7 @@ import Student from '../schemas/studentSchema';
 import { Students } from '../types/types';
 import { middlewareServerError, middlewarePageNotFound } from './middlewares/errorhandlers';
 const PORT = process.env.PORT || 4000;
+import ticketsRouter from './routers/tickets-route/ticketsRouter';
 
 // Start App
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(cors());
 app.use(middlewareServerError);
 app.use(middlewarePageNotFound);
+app.use('/api/tickets', ticketsRouter);
 
 // Connect to MongoDb
 mongoose

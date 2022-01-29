@@ -66,3 +66,5 @@ router.post('/verify', verificationKeyVerify, (_req: express.Request, res: expre
     message: `You have successfully verified ${_req.body.email}, please continue purchasing your ticket`,
   });
 });
+
+export default router;
