@@ -2,7 +2,10 @@
 import { Request, Response, NextFunction } from 'express';
 require('dotenv').config();
 import * as jwt from 'jsonwebtoken';
-import { checkExpirationDate, checkNumbersAndLengths } from '../utils/tickets-route-utils';
+import { checkExpirationDate, checkNumbersAndLengths, arrayUniquenessChecker } from '../utils/tickets-route-utils';
+import Movie from '../../schemas/moviesSchema';
+import Ticket from '../../schemas/ticketsSchema';
+import { Tickets } from '../../types/types';
 
 // Middleware function for Tickets Route
 export const verificationKeyVerify = (_req: Request, res: Response, next: NextFunction) => {
@@ -30,24 +33,50 @@ export const validateEmail = (_req: Request, res: Response, next: NextFunction) 
     : res.status(403).json({ message: 'this email is invalid' });
 };
 
-// // Verify user valid age
-// export const validateAge = (_req: Request, res: Response, next: NextFunction) => {
-//   _req.body.age >= 18
-//     ? next()
-//     : res.status(403).json({ message: 'You may only purchase tickets if you are 18 years old or above' });
-// };
+// Verify user valid age
+export const validateAge = (_req: Request, res: Response, next: NextFunction) => {
+  _req.body.age >= 18
+    ? next()
+    : res.status(403).json({ message: 'You may only purchase tickets if you are 18 years old or above' });
+};
 
 // Verify user valid Credit card
 export const validateCreditCardDetails = (_req: Request, res: Response, next: NextFunction) => {
   const { card_number, card_expiration_date, national_id, ccv } = _req.body;
   if (
     checkNumbersAndLengths(card_number, 16) &&
-    checkExpirationDate(card_expiration_date) &&
+    checkExpirationDate(card_expiration_date, new Date()) &&
     checkNumbersAndLengths(national_id, 9) &&
     checkNumbersAndLengths(ccv, 3)
   ) {
     next();
   } else {
     res.status(403).json({ message: 'Invalid Card Details' });
+  }
+};
+
+// Check sit availability
+export const checkSeatAvailability = async (_req: Request, res: Response, next: NextFunction) => {
+  const { seats, movie_id } = _req.body;
+  try {
+    const currentMovie = await Movie.findOne({ id: movie_id });
+    arrayUniquenessChecker(seats, currentMovie['available_sits'])
+      ? next()
+      : res.status(403).json({ message: 'these sit are taken' });
+  } catch (err) {
+    res.status(500).json({ message: 'internal server error, please comeback later' });
+  }
+};
+
+// Check if movie Date has passed before let them change
+
+export const checkMovieDateCompareToOrder = async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const currentTicket: Tickets = await Ticket.findOne({ secret_key: _req.body.orderId });
+    checkExpirationDate(currentTicket.purchase_date, currentTicket.movie_date)
+      ? next()
+      : res.status(403).json({ message: 'this action is no longer available' });
+  } catch (err) {
+    res.status(500).json({ message: 'internal server error, please comeback later' });
   }
 };

@@ -24,6 +24,7 @@ export const generateVerificationKey = (full_name: string, email: string) => {
 // Add new ticket
 export const AddTicket = async (
   full_name: string,
+  secret_key: string,
   movie_id: string,
   email: string,
   movie_title: string,
@@ -35,7 +36,7 @@ export const AddTicket = async (
   try {
     await Ticket.insertMany({
       full_name,
-      secret_key: generateSecretKey(),
+      secret_key,
       movie_id,
       email,
       movie_title,
@@ -52,8 +53,8 @@ export const AddTicket = async (
 };
 
 // Check Card Expiration Date
-export const checkExpirationDate = (card_expiration_date: Date) => {
-  let diff = new Date().getTime() - card_expiration_date.getTime();
+export const checkExpirationDate = (card_expiration_date: Date, maxDate: Date) => {
+  let diff = maxDate.getTime() - card_expiration_date.getTime();
   if (diff < 0) {
     return true;
   } else {
@@ -63,14 +64,19 @@ export const checkExpirationDate = (card_expiration_date: Date) => {
 
 // Check Card/National Id/CCV are numbers and length
 export const checkNumbersAndLengths = (numberString: string, length: number) => {
-  const numberStringComprehesion = [];
+  const numberStringComprehension = [];
   for (let char of numberString) {
     if (Number(char)) {
-      numberStringComprehesion.push(char);
+      numberStringComprehension.push(char);
     }
   }
-  if (numberStringComprehesion.length == length) return true;
+  if (numberStringComprehension.length == length) return true;
   else return false;
 };
 
 checkNumbersAndLengths('ccv', 3);
+
+// Check if Array Include Another Array
+export const arrayUniquenessChecker = (arr: Array<any>, target: Array<any>): boolean => {
+  return target.every(v => arr.includes(v));
+};
