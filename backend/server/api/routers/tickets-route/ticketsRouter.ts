@@ -20,7 +20,7 @@ import {
   checkMovieDateCompareToOrder,
 } from '../../middlewares/ticketsRouterMiddlewares';
 import { updateMovieSeats } from '../../utils/movie-route-utils';
-import { AddTicket } from '../../utils/tickets-route-utils';
+import { AddTicket, userUpdateSeats } from '../../utils/tickets-route-utils';
 
 // Start Router
 const router: Router = express.Router();
@@ -113,43 +113,50 @@ router.put(
   checkSeatAvailability, // seats
   async (_req: express.Request, res: express.Response) => {
     try {
-      if (_req.verified) {
-        const { email, seats, orderId } = _req.body;
-        const currentTicket = await Ticket.findOneAndUpdate({ secret_key: orderId }, { sit: seats });
-        const mailContent: VerificationEmail = mailSuccessfulPurchase(
-          currentTicket.full_name,
-          currentTicket.movie_title,
-          currentTicket.seats,
-          currentTicket.secret_key,
-          currentTicket.price,
-          currentTicket.movie_date,
-          currentTicket.time_start
-        );
-        sendMailFn(email, mailContent.subject, mailContent.text);
-        res.status(200).json({
-          statusCode: 200,
-          message: `Success, an updated receipt was sent to ${email}`,
-          process_token: _req.process_token,
-        });
-      }
+      const { email, seats, prevSeats, orderId, movieId } = _req.body;
+      await updateMovieSeats('remove', prevSeats, movieId);
+      await updateMovieSeats('add', seats, movieId);
+      await userUpdateSeats(seats, prevSeats, orderId);
+      const currentTicket = await Ticket.findOne({ secret_key: orderId });
+      const mailContent: VerificationEmail = mailSuccessfulPurchase(
+        currentTicket.full_name,
+        currentTicket.movie_title,
+        currentTicket.seats,
+        currentTicket.secret_key,
+        currentTicket.price,
+        currentTicket.movie_date,
+        currentTicket.time_start
+      );
+      sendMailFn(email, mailContent.subject, mailContent.text);
+      res.status(200).json({
+        statusCode: 200,
+        message: `Success, an updated receipt was sent to ${email}`,
+        process_token: _req.process_token,
+      });
     } catch (err) {
-      res.status(500).json({ statusCode: 200, message: `Processed failed, please ty again later` });
+      res.status(500).json({ statusCode: 500, message: `Processed failed, please ty again later` });
     }
   }
 );
 
 // User Can Cancel his ticket
 // MiddleWare Check on Date
-router.delete('/cancel-ticket', checkMovieDateCompareToOrder, async (_req: express.Request, res: express.Response) => {
-  const { orderId, full_name, email } = _req.body;
-  try {
-    await Ticket.findOneAndDelete({ secret_key: orderId });
-    const mailContent: VerificationEmail = mailCancellationContent(full_name);
-    sendMailFn(email, mailContent.subject, mailContent.text);
-    res.status(200).json({ statusCode: 200, message: 'Your ticket was cancelled successfully' });
-  } catch (err) {
-    res.status(500).json({ statusCode: 500, message: 'Server Error, please comeback later' });
+router.delete(
+  '/cancel-ticket',
+  verificationKeyVerify,
+  checkMovieDateCompareToOrder,
+  async (_req: express.Request, res: express.Response) => {
+    const { orderId, full_name, email, seats, movieId } = _req.body;
+    try {
+      await Ticket.findOneAndDelete({ secret_key: orderId });
+      await updateMovieSeats('remove', seats, movieId);
+      const mailContent: VerificationEmail = mailCancellationContent(full_name);
+      sendMailFn(email, mailContent.subject, mailContent.text);
+      res.status(200).json({ statusCode: 200, message: 'Your ticket was cancelled successfully' });
+    } catch (err) {
+      res.status(500).json({ statusCode: 500, message: 'Server Error, please comeback later' });
+    }
   }
-});
+);
 
 export default router;

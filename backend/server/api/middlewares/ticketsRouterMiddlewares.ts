@@ -22,7 +22,7 @@ export const verificationKeyVerify = (_req: Request, res: Response, next: NextFu
         decodedVerificationKey['full_name'] === _req.body['full_name']
       ) {
         _req.process_token = token;
-
+        _req.verified = true;
         next();
       } else {
         res.status(403).json({ status: 403, message: 'your token may have been expired, please try again' });
@@ -66,10 +66,9 @@ export const validateCreditCardDetails = (_req: Request, res: Response, next: Ne
 
 // Check sit availability
 export const checkSeatAvailability = async (_req: Request, res: Response, next: NextFunction) => {
-  const { seats, movie_id } = _req.body;
-  console.log(seats, movie_id);
+  const { seats, movieId } = _req.body;
   try {
-    const currentMovie = await Movie.findOne({ movieId: movie_id });
+    const currentMovie = await Movie.findOne({ movieId: movieId });
     arrayUniquenessChecker(currentMovie['available_sits'], seats)
       ? next()
       : res.status(403).json({ message: 'these sit are taken' });
@@ -83,7 +82,7 @@ export const checkSeatAvailability = async (_req: Request, res: Response, next: 
 export const checkMovieDateCompareToOrder = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const currentTicket: Tickets = await Ticket.findOne({ secret_key: _req.body.orderId });
-    checkExpirationDate(currentTicket.purchase_date, currentTicket.movie_date)
+    checkExpirationDate(currentTicket.movie_date, currentTicket.purchase_date)
       ? next()
       : res.status(403).json({ message: 'this action is no longer available' });
   } catch (err) {

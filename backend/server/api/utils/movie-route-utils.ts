@@ -26,8 +26,8 @@ export const updateMovieSeats = async (action: string, seats: Array<string>, mov
     case 'remove':
       try {
         for (let seat of seats) {
-          await Movie.findByIdAndUpdate(movie_id, { $pull: { taken_sits: seat } });
-          await Movie.findByIdAndUpdate(movie_id, { $push: { available_sits: seat } });
+          await Movie.findOneAndUpdate({ movieId: movie_id }, { $pull: { taken_sits: seat } });
+          await Movie.findOneAndUpdate({ movieId: movie_id }, { $push: { available_sits: seat } });
         }
       } catch (err) {
         throw err;

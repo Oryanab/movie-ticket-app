@@ -82,3 +82,12 @@ checkNumbersAndLengths('ccv', 3);
 export const arrayUniquenessChecker = (arr: Array<any>, target: Array<any>): boolean => {
   return target.every(v => arr.includes(v));
 };
+
+export const userUpdateSeats = async (seats: Array<string>, prevSeats: Array<string>, orderId: string) => {
+  for (let seat of seats) {
+    await Ticket.findOneAndUpdate({ secret_key: orderId }, { $push: { seats: seat } });
+  }
+  for (let seat of prevSeats) {
+    await Ticket.findOneAndUpdate({ secret_key: orderId }, { $pull: { seats: seat } });
+  }
+};
