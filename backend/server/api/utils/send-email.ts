@@ -34,6 +34,7 @@ export const sendMailFn = (to: string, subject: string, text: string) => {
   });
 };
 
+// Verification email
 export const mailVerificationContent = (verificationKey: string, full_name: string): VerificationEmail => {
   const verificationMailContent: VerificationEmail = {
     subject: `Dear ${full_name}, Here is your verification code`,
@@ -41,6 +42,39 @@ export const mailVerificationContent = (verificationKey: string, full_name: stri
      hurry up, it will only be valid for the next 10 minutes. \n
      verification key: ${verificationKey}`,
   };
-
   return verificationMailContent;
+};
+
+// Purchase email
+export const mailSuccessfulPurchase = (
+  full_name: string,
+  movie_title: string,
+  seats: Array<string>,
+  secret_key: string,
+  price: number,
+  movie_date: Date,
+  time_start: string
+): VerificationEmail => {
+  const SuccessfulPurchaseMailContent: VerificationEmail = {
+    subject: `Dear ${full_name}, Here is your order details`,
+    text: `Order Details:\n 
+    full name: ${full_name}\n 
+    movie: ${movie_title}\n 
+    date: ${movie_date}\n 
+    starting time: ${time_start}\n 
+    seats: ${seats.toString()}\n
+    price: ${price}\n 
+    full name: ${full_name}\n 
+    Cancellation Key: ${secret_key}\n`,
+  };
+  return SuccessfulPurchaseMailContent;
+};
+
+// Cancellation email
+export const mailCancellationContent = (full_name: string) => {
+  const cancellationMailContent: VerificationEmail = {
+    subject: `Dear ${full_name}, Your order was cancelled successfully`,
+    text: `Thank you`,
+  };
+  return cancellationMailContent;
 };

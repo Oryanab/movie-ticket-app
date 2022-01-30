@@ -18,7 +18,7 @@ export interface Tickets {
   movie_id: String;
   email: String;
   movie_title: String;
-  sit: String;
+  seats: Array<string>;
   price: Number;
   movie_date: Date;
   time_start: String;
@@ -47,7 +47,8 @@ export interface VerificationEmail {
 declare global {
   namespace Express {
     export interface Request {
-      verified: Boolean;
+      verified: boolean;
+      process_token: string;
     }
   }
 }
