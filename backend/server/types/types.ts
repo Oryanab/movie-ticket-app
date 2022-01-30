@@ -26,7 +26,7 @@ export interface Tickets {
 }
 
 export interface Movies {
-  id: String;
+  movieId: String;
   movie_title: String;
   img: String;
   trailer: String;

@@ -59,7 +59,7 @@ export const validateCreditCardDetails = (_req: Request, res: Response, next: Ne
 export const checkSeatAvailability = async (_req: Request, res: Response, next: NextFunction) => {
   const { seats, movie_id } = _req.body;
   try {
-    const currentMovie = await Movie.findOne({ id: movie_id });
+    const currentMovie = await Movie.findOne({ movieId: movie_id });
     arrayUniquenessChecker(seats, currentMovie['available_sits'])
       ? next()
       : res.status(403).json({ message: 'these sit are taken' });

@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import { Movies } from '../types/types';
 
 const moviesSchema: mongoose.Schema = new Schema<Movies>({
-  id: { type: String, required: true },
+  movieId: { type: String, required: true },
   movie_title: { type: String, required: true },
   img: { type: String, required: true },
   trailer: { type: String, required: true },

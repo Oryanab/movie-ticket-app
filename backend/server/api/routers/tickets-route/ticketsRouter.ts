@@ -25,21 +25,6 @@ import { AddTicket } from '../../utils/tickets-route-utils';
 // Start Router
 const router: Router = express.Router();
 
-// Endpoints
-// Endpoints
-
-// Get all Tickets
-// Post new ticket
-//
-
-// Middleware
-// Check sit availability
-
-// Send mail for:
-// Cancellation
-// Punrchase
-// changed sit
-
 // Get all tickets
 router.get('/view-tickets', async (_req: express.Request, res: express.Response) => {
   try {
@@ -121,11 +106,23 @@ router.put(
   '/change-sit',
   verificationKeyVerify,
   checkMovieDateCompareToOrder,
+  checkSeatAvailability, // seats , movie_id
   async (_req: express.Request, res: express.Response) => {
     try {
       if (_req.verified) {
-        const { email, newSit, orderId } = _req.body;
-        const currentTicket = await Ticket.findOneAndUpdate({ secret_key: orderId }, { sit: newSit });
+        const { email, seats, orderId } = _req.body;
+        const currentTicket = await Ticket.findOneAndUpdate({ secret_key: orderId }, { sit: seats });
+        const mailContent: VerificationEmail = mailSuccessfulPurchase(
+          currentTicket.full_name,
+          currentTicket.movie_title,
+          currentTicket.seats,
+          currentTicket.secret_key,
+          currentTicket.price,
+          currentTicket.movie_date,
+          currentTicket.time_start
+        );
+        sendMailFn(email, mailContent.subject, mailContent.text);
+
         res.status(200).json({
           statusCode: 200,
           message: `Success, an updated receipt was sent to ${email}`,

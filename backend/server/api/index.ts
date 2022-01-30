@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { middlewareServerError, middlewarePageNotFound } from './middlewares/errorhandlers';
 const PORT = process.env.PORT || 4000;
 import ticketsRouter from './routers/tickets-route/ticketsRouter';
+import movieRouter from './routers/movies-route/moviesRouter';
 
 // Start App
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(middlewareServerError);
 app.use(middlewarePageNotFound);
 app.use('/api/tickets', ticketsRouter);
+app.use('/api/movies', movieRouter);
 
 // Connect to MongoDb
 mongoose

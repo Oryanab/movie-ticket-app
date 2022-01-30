@@ -10,7 +10,7 @@ import { movieNameValidator } from '../../middlewares/moviesRouterMiddleware';
 const router: Router = express.Router();
 
 // Routes
-router.get('/', async (_req: express.Request, res: express.Response) => {
+router.get('/get-movies', async (_req: express.Request, res: express.Response) => {
   try {
     const allMovies: Movies[] = await Movie.find();
     res.status(200).json({ statusCode: 200, message: allMovies });
@@ -23,14 +23,14 @@ router.post('/add-movie', movieNameValidator, async (_req: express.Request, res:
   try {
     const { movie_title, img, trailer, ganres, description, price, movie_date, time_start } = _req.body;
     await Movie.insertMany({
-      id: secretId(),
+      movieId: secretId(),
       movie_title,
       img,
       trailer,
       ganres,
       description,
       price,
-      movie_date,
+      movie_date: new Date(movie_date),
       time_start,
       available_sits: returnAvailableSeats(),
       taken_sits: [],
@@ -42,9 +42,9 @@ router.post('/add-movie', movieNameValidator, async (_req: express.Request, res:
 });
 
 // Get single Movie
-router.get('/single-movie', async (_req: express.Request, res: express.Response) => {
+router.get('/details/:movieid', async (_req: express.Request, res: express.Response) => {
   try {
-    const currentMovie = await Movie.findOne({ id: _req.body.id });
+    const currentMovie: Movies = await Movie.findOne({ movieId: _req.params.movieid });
     res.status(200).json({ statusCode: 200, currentMovie });
   } catch (err) {
     res.status(401).json({ statusCode: 404, message: 'could not find movie' });
@@ -52,11 +52,13 @@ router.get('/single-movie', async (_req: express.Request, res: express.Response)
 });
 
 // Remove movie
-router.delete('/delete-movie', async (_req: express.Request, res: express.Response) => {
+router.delete('/delete-movie/:movieId', async (_req: express.Request, res: express.Response) => {
   try {
-    const currentMovie = await Movie.findOneAndDelete({ id: _req.body.id });
+    const currentMovie = await Movie.findOneAndDelete({ movieId: _req.params.movieId });
     res.status(200).json({ statusCode: 200, message: `${currentMovie['movie_title']} was removed successfully` });
   } catch (err) {
     res.status(401).json({ statusCode: 404, message: 'could not find movie' });
   }
 });
+
+export default router;
