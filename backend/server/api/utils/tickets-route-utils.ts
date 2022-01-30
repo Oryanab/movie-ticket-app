@@ -70,13 +70,9 @@ export const checkNumbersAndLengths = (numberString: string, length: number) => 
       numberStringComprehension.push(char);
     }
   }
-  console.log(numberStringComprehension);
-  console.log(numberStringComprehension.length);
   if (numberStringComprehension.length === length) return true;
   else return false;
 };
-
-checkNumbersAndLengths('ccv', 3);
 
 // Check if Array Include Another Array
 export const arrayUniquenessChecker = (arr: Array<any>, target: Array<any>): boolean => {
