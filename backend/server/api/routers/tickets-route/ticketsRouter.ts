@@ -46,20 +46,24 @@ router.post(
     try {
       const secret_key = generateSecretKey();
       const { full_name, movie_id, email, movie_title, seats, price, movie_date, time_start } = _req.body;
-      if (await AddTicket(full_name, secret_key, movie_id, email, movie_title, seats, price, movie_date, time_start)) {
-        await updateMovieSeats('add', seats, movie_id);
-        const mailContent: VerificationEmail = mailSuccessfulPurchase(
-          full_name,
-          movie_title,
-          seats,
-          secret_key,
-          price,
-          movie_date,
-          time_start
-        );
-        sendMailFn(email, mailContent.subject, mailContent.text);
-        res.status(200).json({ statusCode: 200, message: 'Ticket was purchased successfully' });
-      }
+      AddTicket(full_name, secret_key, movie_id, email, movie_title, seats, price, movie_date, time_start)
+        .then(async () => {
+          await updateMovieSeats('add', seats, movie_id);
+          const mailContent: VerificationEmail = mailSuccessfulPurchase(
+            full_name,
+            movie_title,
+            seats,
+            secret_key,
+            price,
+            movie_date,
+            time_start
+          );
+          sendMailFn(email, mailContent.subject, mailContent.text);
+          res.status(200).json({ statusCode: 200, message: 'Ticket was purchased successfully' });
+        })
+        .catch(() => {
+          res.status(401).json({ statusCode: 500, message: 'failed to update movie seats' });
+        });
     } catch (err) {
       res.status(401).json({ statusCode: 500, message: 'failed to purchase ticket' });
     }
@@ -103,10 +107,10 @@ router.get('/view-ticket-details/:orderId', async (_req: express.Request, res: e
 // User can change sit with his order secret_key
 // MiddleWare Check on Date
 router.put(
-  '/change-sit',
+  '/change-seat',
   verificationKeyVerify,
   checkMovieDateCompareToOrder,
-  checkSeatAvailability, // seats , movie_id
+  checkSeatAvailability, // seats
   async (_req: express.Request, res: express.Response) => {
     try {
       if (_req.verified) {
@@ -122,7 +126,6 @@ router.put(
           currentTicket.time_start
         );
         sendMailFn(email, mailContent.subject, mailContent.text);
-
         res.status(200).json({
           statusCode: 200,
           message: `Success, an updated receipt was sent to ${email}`,

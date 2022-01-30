@@ -9,7 +9,7 @@ export const generateSecretKey = (): string => {
 
 export const generateVerificationKey = (full_name: string, email: string) => {
   const accessToken = jwt.sign({ full_name, email }, process.env.SECRET!, {
-    expiresIn: '10m',
+    expiresIn: '30m',
   });
   return accessToken;
 };
@@ -66,11 +66,13 @@ export const checkExpirationDate = (card_expiration_date: Date, maxDate: Date) =
 export const checkNumbersAndLengths = (numberString: string, length: number) => {
   const numberStringComprehension = [];
   for (let char of numberString) {
-    if (Number(char)) {
+    if (Number(char) || char === '0') {
       numberStringComprehension.push(char);
     }
   }
-  if (numberStringComprehension.length == length) return true;
+  console.log(numberStringComprehension);
+  console.log(numberStringComprehension.length);
+  if (numberStringComprehension.length === length) return true;
   else return false;
 };
 

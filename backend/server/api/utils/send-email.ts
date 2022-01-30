@@ -35,7 +35,7 @@ export const sendMailFn = (to: string, subject: string, text: string) => {
 };
 
 // Verification email
-export const mailVerificationContent = (verificationKey: string, full_name: string): VerificationEmail => {
+export const mailVerificationContent = (full_name: string, verificationKey: string): VerificationEmail => {
   const verificationMailContent: VerificationEmail = {
     subject: `Dear ${full_name}, Here is your verification code`,
     text: `Here is your verification code please copy and paste it in the instructed field,\n
