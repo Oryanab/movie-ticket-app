@@ -6,6 +6,7 @@ import { middlewareServerError, middlewarePageNotFound } from './middlewares/err
 const PORT = process.env.PORT || 4000;
 import ticketsRouter from './routers/tickets-route/ticketsRouter';
 import movieRouter from './routers/movies-route/moviesRouter';
+const queue = require('express-queue');
 
 // Start App
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(cors());
 app.use(middlewareServerError);
 app.use(middlewarePageNotFound);
+app.use(queue({ activeLimit: 2, queuedLimit: -1 }));
 app.use('/api/tickets', ticketsRouter);
 app.use('/api/movies', movieRouter);
 
