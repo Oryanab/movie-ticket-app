@@ -60,11 +60,10 @@ export const mailSuccessfulPurchase = (
     text: `Order Details:\n 
     full name: ${full_name}\n 
     movie: ${movie_title}\n 
-    date: ${movie_date}\n 
+    date: ${movie_date.toLocaleDateString()}\n 
     starting time: ${time_start}\n 
     seats: ${seats.toString()}\n
     price: ${price}\n 
-    full name: ${full_name}\n 
     Cancellation Key: ${secret_key}\n`,
   };
   return SuccessfulPurchaseMailContent;
