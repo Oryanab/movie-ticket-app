@@ -43,3 +43,15 @@ export interface VerificationEmail {
   subject: string;
   text: string;
 }
+
+export interface FilteredMovieObj {
+  key: string;
+  value: Array<Output>;
+  data?: Movies;
+}
+
+export interface Output {
+  movie_date: string;
+  time_start: Date;
+  movieId: string;
+}
