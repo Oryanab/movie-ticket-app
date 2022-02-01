@@ -343,3 +343,17 @@ export const singleMovie = {
   ],
   taken_sits: ['2b', '2c', '2d', '2e', '2f', '2g'],
 };
+
+export const singleTicket = {
+  _id: '61f972d1321df085a0f8791c',
+  full_name: 'oryan abergel',
+  secret_key: 'bc04ac27-6605-4569-a3e6-1a02099249c4',
+  movie_id: '89e441b8-98ca-4456-91e9-180b1d1fefa3',
+  email: 'oryan445@gmail.com',
+  movie_title: 'title1',
+  seats: ['8c'],
+  price: '49',
+  movie_date: '2033-01-01T22:00:00.000Z',
+  time_start: '08:00',
+  purchase_date: '2022-02-01T17:50:09.566Z',
+};
