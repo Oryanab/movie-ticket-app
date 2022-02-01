@@ -239,8 +239,14 @@ export const createUniqueMovieDateArray = (uniqueMovieItem: FilteredMovieObj) =>
     (fn) uniqueMovieArray -> return a unique lists of movies
     (fn) createUniqueMovieDateArray -> return a list of every showing
 
-*/
+    const uniqueMovieArray = createUniqueMovieItemArray(movies);
+    console.log(uniqueMovieArray);
 
+    for (const i of uniqueMovieArray) {
+    console.log(createUniqueMovieDateArray(i));
+    }
+
+*/
 const uniqueMovieArray = createUniqueMovieItemArray(movies);
 console.log(uniqueMovieArray);
 
