@@ -141,6 +141,7 @@ export default function TicketPanel() {
               <Form.Label>
                 Email Address: <b>{singleTicket.email}</b>
               </Form.Label>{' '}
+              <br />
               <Button
                 onClick={e => {
                   setShowVerificationSection('block');
