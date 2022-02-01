@@ -351,7 +351,7 @@ export const singleTicket = {
   movie_id: '89e441b8-98ca-4456-91e9-180b1d1fefa3',
   email: 'oryan445@gmail.com',
   movie_title: 'title1',
-  seats: ['8c'],
+  seats: ['8c', '2c', '2d'],
   price: '49',
   movie_date: '2033-01-01T22:00:00.000Z',
   time_start: '08:00',

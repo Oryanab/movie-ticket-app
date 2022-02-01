@@ -6,6 +6,7 @@ import Navbar from './child-components/Navbar';
 import Movie from './child-components/Movies';
 import SingleMoviePage from './child-components/SingleMoviePage';
 import { movies } from '../Utils/movieUtils';
+import TicketPanel from './child-components/TicketPanel';
 
 export const App: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ export const App: React.FC = () => {
         {movies.map(movie => (
           <Route key={movie.movieId} path={`/tickets/${movie.movieId}`} element={<SingleMoviePage />} />
         ))}
+        <Route path="/ticket-panel" element={<TicketPanel />} />
         <Route path="/" element={<Movie />} />
       </Routes>
     </Router>

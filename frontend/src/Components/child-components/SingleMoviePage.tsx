@@ -27,7 +27,7 @@ export default function SingleMoviePage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <div style={{ backgroundColor: 'white', padding: '5vw', margin: '1vw', borderRadius: '1vh', width: '50%' }}>
-        <h1>Choose Seat</h1>
+        <h2>Choose Seat</h2>
         <div style={{ display: 'inline-grid', gridTemplateColumns: 'auto auto auto auto auto auto auto auto' }}>
           <>
             {allSeats.map((seat: string) => {
