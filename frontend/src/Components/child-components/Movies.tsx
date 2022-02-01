@@ -49,10 +49,7 @@ export default function Movie() {
                   <>
                     {createUniqueMovieDateArray(movie).forEach(item => {
                       if (new Date(item.key).toLocaleDateString() === selectedDate) {
-                        item.value.map((time: TimeObject) => {
-                          console.log(time.time_start);
-                          return <option key={time.movieId}>{time.time_start}</option>;
-                        });
+                        item.value.map((time: TimeObject) => <option key={time.movieId}>{time.time_start}</option>);
                       }
                     })}
                   </>
