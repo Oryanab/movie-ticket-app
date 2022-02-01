@@ -55,3 +55,13 @@ export interface Output {
   time_start: Date;
   movieId: string;
 }
+
+export interface TimeObject {
+  time_start: string;
+  movieId: string;
+}
+
+export interface DateItem {
+  key: string;
+  value: Array<TimeObject>;
+}

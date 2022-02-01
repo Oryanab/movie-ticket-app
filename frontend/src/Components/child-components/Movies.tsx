@@ -1,18 +1,8 @@
 import { AnyRecord } from 'dns';
 import React, { useState } from 'react';
 import { Card, ListGroupItem, ListGroup, Form, Button } from 'react-bootstrap';
-import { Movies } from '../../Redux/Types/generalTypes';
+import { Movies, TimeObject, DateItem } from '../../Redux/Types/generalTypes';
 import { movies, createUniqueMovieItemArray, createUniqueMovieDateArray } from '../../Utils/movieUtils';
-
-interface TimeObject {
-  time_start: string;
-  movieId: string;
-}
-
-interface DateItem {
-  key: string;
-  value: Array<TimeObject>;
-}
 
 export default function Movie() {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toLocaleDateString());

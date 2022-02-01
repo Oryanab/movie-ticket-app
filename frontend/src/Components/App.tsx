@@ -4,6 +4,7 @@ import Counter from './Examples/Counter';
 import Student from './Examples/Student';
 import Navbar from './child-components/Navbar';
 import Movie from './child-components/Movies';
+import SingleMoviePage from './child-components/SingleMoviePage';
 import { movies } from '../Utils/movieUtils';
 
 export const App: React.FC = () => {
@@ -13,9 +14,9 @@ export const App: React.FC = () => {
       <Routes>
         <Route path="/student" element={<Student />} />
         <Route path="/counter" element={<Counter />} />
-        {/* {movies.map(movie => (
-          <Route path={`/`} element={<Movie />} />
-        ))} */}
+        {movies.map(movie => (
+          <Route key={movie.movieId} path={`/tickets/${movie.movieId}`} element={<SingleMoviePage />} />
+        ))}
         <Route path="/" element={<Movie />} />
       </Routes>
     </Router>
