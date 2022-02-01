@@ -50,7 +50,6 @@ export default function Navbar() {
                 padding: '0.5vh',
                 fontSize: '2vh',
                 fontWeight: 'bold',
-
                 textAlign: 'center',
               }}
               as="li"
