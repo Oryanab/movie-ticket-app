@@ -258,7 +258,7 @@ export const singleMovie = {
   _id: '61f6ac2aa9dda0b87d4bce3d',
   movieId: '89e441b8-98ca-4456-91e9-180b1d1fefa3',
   movie_title: 'title1',
-  img: 'img1',
+  img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrdPsGJEBxBev7gKo_EMp0Pgk7Q7su_xTUxf3vo8dE9S_CiG2Z',
   trailer: 'trailer1',
   genres: [],
   description: 'description1',
