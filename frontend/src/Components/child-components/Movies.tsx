@@ -1,10 +1,27 @@
 import { AnyRecord } from 'dns';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, ListGroupItem, ListGroup, Form, Button } from 'react-bootstrap';
 import { Movies, TimeObject, DateItem } from '../../Redux/Types/generalTypes';
-import { movies, createUniqueMovieItemArray, createUniqueMovieDateArray } from '../../Utils/movieUtils';
+import { createUniqueMovieItemArray, createUniqueMovieDateArray } from '../../Utils/movieUtils';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { State } from '../../Redux/Types/storeTypes';
+import { getMoviesList } from '../../Redux/Actions/moviesReducerActions';
+import { movies } from '../../Utils/movieUtils';
+
+// import axios from 'axios';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { State } from '../../Redux/Types/storeTypes';
+// const Dispatch = useDispatch();
+// const students = useSelector((state: State) => state.students);
 
 export default function Movie() {
+  // Reducer States:
+  // const Dispatch = useDispatch();
+  // const movies = useSelector((state: State) => state.moviesList);
+  // useEffect(() => {
+  //   Dispatch(getMoviesList());
+  // }, []);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toLocaleDateString());
   const initialAvailableHours = [{ time_start: '', movieId: 'undefined' }];
   const [availableHours, setAvailableHours] = useState<Array<TimeObject>>(initialAvailableHours);
@@ -58,7 +75,7 @@ export default function Movie() {
                   onChange={(e: any) => {
                     const chosenDate = e.target.value;
                     setSelectedDate(new Date(chosenDate).toLocaleDateString());
-                    console.log(selectedDate);
+
                     if (chosenDate === 'Please Select Date') {
                       setAvailableHours(initialAvailableHours);
                     } else {

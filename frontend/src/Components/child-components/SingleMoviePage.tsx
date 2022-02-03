@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { singleMovie } from '../../Utils/movieUtils';
 import { Container, Row, Col, Button, Form, Badge } from 'react-bootstrap';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { State } from '../../Redux/Types/storeTypes';
+import { getSingleMovie } from '../../Redux/Actions/singleMovieReducerActions';
+import { Movies } from '../../Redux/Types/moviesReducerTypes';
 
 export default function SingleMoviePage() {
   const link = window.location.pathname.split('/')[2];
+
   // Seats
+  // const singleMovie: Movies = useSelector((state: State) => state.singleMovieR);
+  // const Dispatch = useDispatch();
+  // useEffect(() => {
+  //   Dispatch(getSingleMovie(link));
+  // }, []);
+
   const [allSeats, setAllSeats] = useState<Array<string>>(
     singleMovie.available_sits.concat(singleMovie.taken_sits).sort()
   );

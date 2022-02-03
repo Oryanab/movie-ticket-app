@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Counter from './Examples/Counter';
 import Student from './Examples/Student';
@@ -8,7 +8,18 @@ import SingleMoviePage from './child-components/SingleMoviePage';
 import { movies } from '../Utils/movieUtils';
 import TicketPanel from './child-components/TicketPanel';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { State } from '../Redux/Types/storeTypes';
+import { getMoviesList } from '../Redux/Actions/moviesReducerActions';
+import { Movies } from '../Redux/Types/generalTypes';
+
 export const App: React.FC = () => {
+  // const Dispatch = useDispatch();
+  // const movies: Movies[] = useSelector((state: State) => state.moviesList);
+  // useEffect(() => {
+  //   Dispatch(getMoviesList());
+  // }, []);
+
   return (
     <Router>
       <Navbar />

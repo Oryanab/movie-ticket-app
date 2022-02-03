@@ -1,13 +1,13 @@
 export interface Tickets {
-  full_name: String;
-  secret_key: String;
-  movie_id: String;
-  email: String;
-  movie_title: String;
+  full_name: string;
+  secret_key: string;
+  movie_id: string;
+  email: string;
+  movie_title: string;
   seats: Array<string>;
-  price: Number;
+  price: number;
   movie_date: Date;
-  time_start: String;
+  time_start: string;
   purchase_date: Date;
 }
 
