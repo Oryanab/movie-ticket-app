@@ -1,64 +1,43 @@
 // Imports
-import React, { useState, useEffect, useRef } from 'react';
-import { singleTicket } from '../../Utils/movieUtils';
-import { singleMovie } from '../../Utils/movieUtils';
+import React, { useEffect, useState } from 'react';
+//import { singleTicket } from '../../Utils/movieUtils';
+//import { singleMovie } from '../../Utils/movieUtils';
 import { Button, Form, Badge } from 'react-bootstrap';
+
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../../Redux/Types/storeTypes';
+import { Tickets } from '../../Redux/Types/generalTypes';
 import { getSingleMovie } from '../../Redux/Actions/singleMovieReducerActions';
 import { getSingleTicket } from '../../Redux/Actions/singleTicketReducerActions';
-import { Tickets } from '../../Redux/Types/ticketsReducerTypes';
-import { Movies } from '../../Redux/Types/moviesReducerTypes';
 
 export default function TicketPanel() {
-  // Flags
-  const [showSections, setShowSections] = useState<string>('none');
-  const [showVerificationSection, setShowVerificationSection] = useState<string>('none');
-  //const [showOrderDetails, setShowOrderDetails] = useState<string>('none');
-  // const [singleTicket, setSingleTicket] = useState<Tickets>({
-  //   full_name: 'undefined',
-  //   secret_key: 'undefined',
-  //   movie_id: 'undefined',
-  //   email: 'undefined',
-  //   movie_title: 'undefined',
-  //   seats: ['undefined'],
-  //   price: 0,
-  //   movie_date: new Date(),
-  //   time_start: 'undefined',
-  //   purchase_date: new Date(),
-  // });
-
-  // Reducers
-  // const Dispatch = useDispatch();
-  // const singleMovie: Movies = useSelector((state: State) => state.singleMovieR);
-  // const handleOrderIdForm = async (e: React.MouseEvent<HTMLElement>, ticketId: string) => {
-  //   e.preventDefault();
-  //   try {
-  //     const singleTicketReq = await (
-  //       await axios.get(`http://localhost:4000/api/tickets/view-ticket-details/${ticketId}`)
-  //     ).data.message;
-  //     setSingleTicket(singleTicketReq);
-  //     Dispatch(getSingleMovie(singleTicketReq.movie_id));
-  //     setShowOrderDetails('block');
-  //   } catch (err) {
-  //     alert('could not find movie');
-  //   }
-  // };
-
-  // Seats
-  const [allSeats, setAllSeats] = useState<Array<string>>(
-    singleMovie.available_sits.concat(singleMovie.taken_sits).sort()
-  );
-  const [selectedSeats, setSelectedSeats] = useState<string[]>(singleTicket.seats);
-
+  const Dispatch = useDispatch();
+  const singleTicket = useSelector((state: State) => state.singleTicketR);
+  const singleMovie = useSelector((state: State) => state.singleMovieR);
   // Form
   const [userOrderId, setUserOrderId] = useState<string>('');
   const [userAction, setUserAction] = useState<string>('Cancel Ticket');
-  //const [userEmail, setUserEmail] = useState<string>(singleTicket.email);
-  //   const [userFullName, setUserFullName] = useState<string>(singleTicket.full_name);
-  //   const [userVerificationKey, setUserVerificationKey] = useState<string>('');
 
+  // Flags
+  const [showSections, setShowSections] = useState<string>('none');
+  const [showVerificationSection, setShowVerificationSection] = useState<string>('none');
+  const [showInitialInfo, setShowInitialInfo] = useState<string>('none');
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const getTicketDetails = (e: React.MouseEvent<HTMLElement>) => {
+    Dispatch(getSingleTicket(userOrderId));
+    const response = axios
+      .get(`http://localhost:4000/api/tickets/view-ticket-details/${userOrderId}`)
+      .then((res: any) => {
+        setSelectedSeats(res.data.message.seats);
+        Dispatch(getSingleMovie(res.data.message.movie_id));
+        setShowInitialInfo('block');
+      });
+  };
+
+  // Seats
+  const allSeats = [...singleMovie.taken_sits, ...singleMovie.available_sits].sort();
+  console.log(Number(singleTicket.price) * singleTicket.seats.length);
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <div
@@ -70,14 +49,14 @@ export default function TicketPanel() {
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
             <Form.Label>Order Id:</Form.Label>
             <Form.Control
-              onBlur={e => setUserOrderId(e.target.value)}
+              onChange={e => setUserOrderId(e.target.value)}
               type="text"
               placeholder="********-****-****-****-************"
             />
             <Button
-              onClick={(e: React.MouseEvent<HTMLElement>) => {
+              onClick={(e: any) => {
                 if (userOrderId.length !== 36) alert('invalid');
-                else setShowSections('block');
+                else getTicketDetails(e.target.value);
               }}
               style={{ marginTop: '2vh' }}
               variant="outline-primary"
@@ -90,46 +69,47 @@ export default function TicketPanel() {
           <h2>Choose Seat</h2>
           <div style={{ display: 'inline-grid', gridTemplateColumns: 'auto auto auto auto auto auto auto auto' }}>
             <>
-              {allSeats.map((seat: string) => {
-                const taken_sits: Array<string> = singleMovie.taken_sits;
-                const user_sits: Array<string> = singleTicket.seats;
-                const [cursor, setCursor] = useState(taken_sits.includes(seat) ? 'not-allowed' : 'pointer');
-                const [background, setBackground] = useState(
-                  user_sits.includes(seat) ? 'orange' : taken_sits.includes(seat) ? 'red' : 'blue'
-                );
-                const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-                  if (taken_sits.includes(seat) && !user_sits.includes(seat)) alert('taken');
-                  else {
-                    if (background === 'blue' && selectedSeats.length < user_sits.length) {
-                      setSelectedSeats([...selectedSeats, seat]);
-                      setBackground('green');
-                    } else {
-                      setSelectedSeats([...selectedSeats.filter(n => n !== seat)]);
-                      setBackground('blue');
+              {singleMovie &&
+                allSeats.map((seat: string) => {
+                  if (seat === 'undefined') return;
+                  const taken_sits: Array<string> = singleMovie.taken_sits;
+                  const user_sits: Array<string> = singleTicket.seats;
+                  const cursor = singleMovie.taken_sits.includes(seat) ? 'not-allowed' : 'pointer';
+                  const background = user_sits.includes(seat) ? 'orange' : taken_sits.includes(seat) ? 'red' : 'blue';
+
+                  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+                    if (taken_sits.includes(seat) && !user_sits.includes(seat)) alert('taken');
+                    else {
+                      if (background === 'blue' && selectedSeats.length < user_sits.length) {
+                        setSelectedSeats([...selectedSeats, seat]);
+                        //setBackground('green');
+                      } else {
+                        setSelectedSeats([...selectedSeats.filter(n => n !== seat)]);
+                        //setBackground('blue');
+                      }
                     }
-                  }
-                };
-                return (
-                  <div
-                    style={{
-                      cursor: cursor,
-                      padding: '0.3vw',
-                      margin: '0.2vw',
-                      backgroundColor: background,
-                      borderRadius: '50%',
-                      color: 'white',
-                      border: 'solid 0.5vh black',
-                    }}
-                    onClick={e => {
-                      handleClick(e);
-                    }}
-                    key={seat}
-                    id={seat}
-                  >
-                    {seat}
-                  </div>
-                );
-              })}
+                  };
+                  return (
+                    <div
+                      style={{
+                        cursor: cursor,
+                        padding: '0.3vw',
+                        margin: '0.2vw',
+                        backgroundColor: background,
+                        borderRadius: '50%',
+                        color: 'white',
+                        border: 'solid 0.5vh black',
+                      }}
+                      onClick={e => {
+                        handleClick(e);
+                      }}
+                      key={seat}
+                      id={seat}
+                    >
+                      {seat}
+                    </div>
+                  );
+                })}
             </>
           </div>
           <br />
@@ -137,6 +117,7 @@ export default function TicketPanel() {
       </div>
       <div
         style={{
+          display: showInitialInfo,
           backgroundColor: 'white',
           padding: '5vw',
           margin: '1vw',
@@ -156,7 +137,7 @@ export default function TicketPanel() {
             </Form.Label>
             <br />
             <Form.Label>
-              Total Cost: <b>{Number(singleMovie.price) * singleTicket.seats.length}</b>
+              Total Cost: <b>{Number(singleTicket.price) * singleTicket.seats.length}</b>
             </Form.Label>
             <br />
             <Form.Label>
@@ -169,15 +150,21 @@ export default function TicketPanel() {
                 ))}
               </>
             </Form.Label>
+            <h5>Select Action:</h5>
+            <Form.Select
+              onChange={e => {
+                setUserAction(e.target.value);
+                setShowSections('block');
+              }}
+              size="sm"
+            >
+              <option>Cancel Ticket</option>
+              <option>Change Seats</option>
+            </Form.Select>
+            <br />
           </Form.Group>
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
             <div style={{ display: showSections }}>
-              <h5>Select Action:</h5>
-              <Form.Select onChange={e => setUserAction(e.target.value)} size="sm">
-                <option>Cancel Ticket</option>
-                <option>Change Seats</option>
-              </Form.Select>
-              <br />
               <h5>Verify Email for Updated Receipt:</h5>
               <Form.Label>
                 Full Name: <b>{singleTicket.full_name}</b>

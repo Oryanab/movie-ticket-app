@@ -97,7 +97,7 @@ router.post('/verify', verificationKeyVerify, (_req: express.Request, res: expre
 // User Can change his sit and cancel his order while viewing his order details
 router.get('/view-ticket-details/:orderId', async (_req: express.Request, res: express.Response) => {
   try {
-    const currentTicket = await Ticket.findOne({ secret_id: _req.params.orderId });
+    const currentTicket = await Ticket.findOne({ secret_key: _req.params.orderId });
     res.status(200).json({ statusCode: 200, message: currentTicket });
   } catch (err) {
     res.status(404).json({ statusCode: 404, message: 'could not find ticket' });
