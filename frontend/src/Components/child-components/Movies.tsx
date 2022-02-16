@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../../Redux/Types/storeTypes';
 import { getMoviesList } from '../../Redux/Actions/moviesReducerActions';
-import { movies } from '../../Utils/movieUtils';
+//import { movies } from '../../Utils/movieUtils';
 
 // import axios from 'axios';
 // import { useDispatch, useSelector } from 'react-redux';
@@ -17,11 +17,11 @@ import { movies } from '../../Utils/movieUtils';
 
 export default function Movie() {
   // Reducer States:
-  // const Dispatch = useDispatch();
-  // const movies = useSelector((state: State) => state.moviesList);
-  // useEffect(() => {
-  //   Dispatch(getMoviesList());
-  // }, []);
+  const Dispatch = useDispatch();
+  const movies = useSelector((state: State) => state.moviesList);
+  useEffect(() => {
+    Dispatch(getMoviesList());
+  }, []);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toLocaleDateString());
   const initialAvailableHours = [{ time_start: '', movieId: 'undefined' }];
   const [availableHours, setAvailableHours] = useState<Array<TimeObject>>(initialAvailableHours);

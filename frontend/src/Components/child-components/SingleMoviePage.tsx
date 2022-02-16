@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { singleMovie } from '../../Utils/movieUtils';
+//import { singleMovie } from '../../Utils/movieUtils';
 import { Container, Row, Col, Button, Form, Badge } from 'react-bootstrap';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,16 +11,16 @@ import { Movies } from '../../Redux/Types/moviesReducerTypes';
 export default function SingleMoviePage() {
   const link = window.location.pathname.split('/')[2];
 
-  // Seats
-  // const singleMovie: Movies = useSelector((state: State) => state.singleMovieR);
-  // const Dispatch = useDispatch();
-  // useEffect(() => {
-  //   Dispatch(getSingleMovie(link));
-  // }, []);
+  //Seats;
+  const singleMovie: Movies = useSelector((state: State) => state.singleMovieR);
+  const Dispatch = useDispatch();
 
-  const [allSeats, setAllSeats] = useState<Array<string>>(
-    singleMovie.available_sits.concat(singleMovie.taken_sits).sort()
-  );
+  useEffect(() => {
+    Dispatch(getSingleMovie(link));
+    //setAllSeats(prevState => [...prevState, ...singleMovie.taken_sits, ...singleMovie.available_sits]);
+  }, []);
+
+  ///setAllSeats(singleMovie.available_sits.concat(singleMovie.taken_sits).sort());
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   // Form
   const [userEmail, setUserEmail] = useState<string>('');
@@ -35,6 +35,92 @@ export default function SingleMoviePage() {
   // Flags
   const [showVerificationSection, setShowVerificationSection] = useState<string>('none');
   const [showPaymentSection, setShowPaymentSection] = useState<string>('none');
+  const arr = [...singleMovie.taken_sits, ...singleMovie.available_sits].sort();
+
+  // Functions
+  function createCookie(name: string, value: string, minutes: number) {
+    let expires;
+    if (minutes) {
+      const date = new Date();
+      date.setTime(date.getTime() + minutes * 60 * 1000);
+      expires = '; expires=' + date.toUTCString();
+    } else {
+      expires = '';
+    }
+    document.cookie = name + '=' + value + expires + ';';
+  }
+
+  function getCookie(cname: string) {
+    const name = cname + '=';
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return '';
+  }
+
+  const sendVerificationEmail = async () => {
+    if (userEmail.length === 0 || userFullName.length === 0) {
+      alert('must insert full name, email and age');
+      return;
+    }
+    const sendMail = await axios.post('http://localhost:4000/api/tickets/get-verification', {
+      full_name: userFullName,
+      email: userEmail,
+      age: userAge,
+    });
+    alert(sendMail.data.message);
+  };
+
+  const verifyVerificationCode = async () => {
+    const returnedData = await axios.post(
+      'http://localhost:4000/api/tickets/verify',
+      {
+        full_name: userFullName,
+        email: userEmail,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userVerificationKey}`,
+        },
+      }
+    );
+    alert(returnedData.data.message);
+    createCookie('tickets', returnedData.data.process_token, 10);
+  };
+
+  const sendPaymentDetails = async () => {
+    const returnedData = await axios.post(
+      'http://localhost:4000/api/tickets/purchase-ticket',
+      {
+        full_name: userFullName,
+        movie_id: link,
+        email: userEmail,
+        movie_title: singleMovie.movie_title,
+        seats: selectedSeats,
+        price: singleMovie.price,
+        movie_date: singleMovie.movie_date,
+        time_start: singleMovie.time_start,
+        card_number: userCreditCardNumber,
+        card_expiration_date: userCardExpirationDate,
+        national_id: userNationalId,
+        ccv: userCcv,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${getCookie('tickets')}`,
+        },
+      }
+    );
+    alert(returnedData.data.message);
+  };
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -42,43 +128,48 @@ export default function SingleMoviePage() {
         <h2>Choose Seat</h2>
         <div style={{ display: 'inline-grid', gridTemplateColumns: 'auto auto auto auto auto auto auto auto' }}>
           <>
-            {allSeats.map((seat: string) => {
-              const taken_sits: Array<string> = singleMovie.taken_sits;
-              const [cursor, setCursor] = useState(taken_sits.includes(seat) ? 'not-allowed' : 'pointer');
-              const [background, setBackground] = useState(taken_sits.includes(seat) ? 'red' : 'blue');
-              const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-                if (taken_sits.includes(seat)) alert('taken');
-                else {
-                  if (background !== 'green') {
-                    setSelectedSeats([...selectedSeats, seat]);
-                    setBackground('green');
-                  } else {
-                    setSelectedSeats([...selectedSeats.filter(n => n !== seat)]);
-                    setBackground('blue');
-                  }
-                }
-              };
-              return (
-                <div
-                  style={{
-                    cursor: cursor,
-                    padding: '0.3vw',
-                    margin: '0.2vw',
-                    backgroundColor: background,
-                    borderRadius: '50%',
-                    color: 'white',
-                    border: 'solid 0.5vh black',
-                  }}
-                  onClick={e => {
-                    handleClick(e);
-                  }}
-                  key={seat}
-                  id={seat}
-                >
-                  {seat}
-                </div>
-              );
-            })}
+            {singleMovie
+              ? arr.map((seat: string) => {
+                  if (seat === 'undefined') return;
+                  const taken_sits: Array<string> = singleMovie.taken_sits;
+                  const cursor = singleMovie.taken_sits.includes(seat) ? 'not-allowed' : 'pointer';
+                  let background = singleMovie.taken_sits.includes(seat) ? 'red' : 'blue';
+                  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+                    if (taken_sits.includes(seat)) alert('taken');
+                    else {
+                      if (background !== 'green') {
+                        if (!selectedSeats.includes(seat)) setSelectedSeats([...selectedSeats, seat]);
+
+                        background = 'green';
+                      } else {
+                        setSelectedSeats([...selectedSeats.filter(n => n !== seat)]);
+
+                        background = 'blue';
+                      }
+                    }
+                  };
+                  return (
+                    <div
+                      style={{
+                        cursor: cursor,
+                        padding: '0.3vw',
+                        margin: '0.2vw',
+                        backgroundColor: background,
+                        borderRadius: '50%',
+                        color: 'white',
+                        border: 'solid 0.5vh black',
+                      }}
+                      onClick={e => {
+                        handleClick(e);
+                      }}
+                      key={seat}
+                      id={seat}
+                    >
+                      {seat}
+                    </div>
+                  );
+                })
+              : 'loading...'}
           </>
         </div>
         <br />
@@ -134,7 +225,8 @@ export default function SingleMoviePage() {
                 onClick={e => {
                   e.preventDefault();
                   if (userAge > 18) {
-                    alert(`${userEmail} + ${userFullName} +${userAge}`);
+                    sendVerificationEmail();
+
                     setShowVerificationSection('block');
                   } else {
                     alert('too young');
@@ -159,6 +251,7 @@ export default function SingleMoviePage() {
               <Button
                 onClick={e => {
                   userVerificationKey.length > 0 ? setShowPaymentSection('block') : setShowPaymentSection('none');
+                  verifyVerificationCode();
                 }}
                 variant="outline-primary"
                 style={{ marginTop: '2vh' }}
@@ -188,7 +281,13 @@ export default function SingleMoviePage() {
               <Form.Control onChange={e => setUserCardExpirationDate(e.target.value)} type="text" placeholder="**/**" />
               <Form.Label>CCV:</Form.Label>
               <Form.Control onChange={e => setUserCcv(e.target.value)} type="text" placeholder="***" />
-              <Button variant="outline-primary" style={{ marginTop: '2vh' }}>
+              <Button
+                onClick={e => {
+                  sendPaymentDetails();
+                }}
+                variant="outline-primary"
+                style={{ marginTop: '2vh' }}
+              >
                 Complete Purchase
               </Button>
             </div>
