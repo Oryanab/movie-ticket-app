@@ -188,19 +188,34 @@ export default function SingleMoviePage() {
             </Form.Label>{' '}
             <h4>General info:</h4>
             <Form.Label>
-              Title: <b>{singleMovie.movie_title}</b>
+              <i>Title:</i> <b>{singleMovie.movie_title}</b>
             </Form.Label>{' '}
             <br />
             <Form.Label>
-              Date: <b>{new Date(singleMovie.movie_date).toLocaleDateString()}</b>
+              <i>Watch Trailer:</i>{' '}
+              <a href={singleMovie.trailer} target={'blank'}>
+                Trailer
+              </a>
+            </Form.Label>{' '}
+            <br />
+            <Form.Label>
+              <i>Genre:</i> <b>{singleMovie.genres.toString()}</b>
+            </Form.Label>{' '}
+            <br />
+            <Form.Label>
+              <i>Description:</i> <p>{singleMovie.description}</p>
+            </Form.Label>{' '}
+            <br />
+            <Form.Label>
+              <i>Date:</i> <b>{new Date(singleMovie.movie_date).toLocaleDateString()}</b>
             </Form.Label>
             <br />
             <Form.Label>
-              Hour: <b>{singleMovie.time_start}</b>
+              <i>Starting At:</i> <b>{singleMovie.time_start}</b>
             </Form.Label>
             <br />
             <Form.Label>
-              Selected Seats:{' '}
+              <i>Selected Seats:</i>{' '}
               <>
                 {selectedSeats.map(seat => (
                   <Badge key={seat} bg="secondary">
@@ -211,7 +226,7 @@ export default function SingleMoviePage() {
             </Form.Label>
             <br />
             <Form.Label>
-              Price (1 unit): <b>{singleMovie.price}</b>
+              <i>Price (1 unit):</i> <b>{singleMovie.price} ILS</b>
             </Form.Label>
             <br />
           </Form.Group>
@@ -267,7 +282,7 @@ export default function SingleMoviePage() {
             <div style={{ marginTop: '2vh', display: showPaymentSection }}>
               <h5>Purchase Cards:</h5>
               <Form.Label>
-                Total Cost: <b>{Number(singleMovie.price) * selectedSeats.length}</b>
+                Total Cost: <b>{Number(singleMovie.price) * selectedSeats.length}ILS</b>
               </Form.Label>
               <br />
               <Form.Label>National Id:</Form.Label>
