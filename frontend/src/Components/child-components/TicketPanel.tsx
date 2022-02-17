@@ -20,7 +20,8 @@ export default function TicketPanel() {
   const [userAction, setUserAction] = useState<string>('Cancel Ticket');
 
   // Flags
-  const [showSections, setShowSections] = useState<string>('none');
+  const [showSeatSection, setShowSeatSections] = useState<string>('none');
+  const [showCancellationSection, setShowCancellationSection] = useState<string>('none');
   const [showVerificationSection, setShowVerificationSection] = useState<string>('none');
   const [showInitialInfo, setShowInitialInfo] = useState<string>('none');
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
@@ -33,6 +34,95 @@ export default function TicketPanel() {
         Dispatch(getSingleMovie(res.data.message.movie_id));
         setShowInitialInfo('block');
       });
+  };
+
+  // Functions
+
+  const sendVerificationEmail = async () => {
+    if (
+      userAction === 'Change Seats' &&
+      selectedSeats.length === singleTicket.seats.length &&
+      selectedSeats.sort().toString() == singleTicket.seats.sort().toString()
+    ) {
+      alert('must select the amount of seats at in in your receipt, at least one must be different!');
+      return;
+    }
+    const sendMail = await axios.post('http://localhost:4000/api/tickets/get-verification', {
+      full_name: singleTicket.full_name,
+      email: singleTicket.email,
+      age: 20,
+    });
+
+    alert(sendMail.data.message);
+  };
+
+  const [userVerificationKey, setUserVerificationKey] = useState<string>('');
+  // const verifyVerificationCode = async () => {
+  //   const returnedData = await axios.post(
+  //     'http://localhost:4000/api/tickets/verify',
+  //     {
+  //       full_name: singleTicket.full_name,
+  //       email: singleTicket.email,
+  //     },
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer ${userVerificationKey}`,
+  //       },
+  //     }
+  //   );
+  //   alert(returnedData.data.message);
+  // };
+
+  const commitTicketCancellation = async (authKey: string) => {
+    const response = await axios.post(
+      'http://localhost:4000/api/tickets/cancel-ticket',
+      {
+        movieId: singleTicket.movie_id,
+        full_name: singleTicket.full_name,
+        email: singleTicket.email,
+        seats: singleTicket.seats,
+        orderId: singleTicket.secret_key,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authKey}`,
+        },
+      }
+    );
+    alert(response.data.message);
+  };
+
+  const commitTicketChangeSeat = async (authKey: string) => {
+    const response = await axios.put(
+      'http://localhost:4000/api/tickets/change-seat',
+      {
+        movie_id: singleTicket.movie_id,
+        full_name: singleTicket.full_name,
+        email: singleTicket.email,
+        prevSeats: singleTicket.seats,
+        seats: selectedSeats,
+        orderId: singleTicket.secret_key,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authKey}`,
+        },
+      }
+    );
+    alert(response.data.message);
+  };
+
+  const commitUserAction = async (authKey: string) => {
+    switch (userAction) {
+      case 'Cancel Ticket':
+        commitTicketCancellation(authKey);
+        break;
+      case 'Change Seats':
+        commitTicketChangeSeat(authKey);
+        break;
+      default:
+        return;
+    }
   };
 
   // Seats
@@ -65,7 +155,7 @@ export default function TicketPanel() {
             </Button>
           </Form.Group>
         </Form>
-        <div style={{ display: showSections }}>
+        <div style={{ display: showSeatSection }}>
           <h2>Choose Seat</h2>
           <div style={{ display: 'inline-grid', gridTemplateColumns: 'auto auto auto auto auto auto auto auto' }}>
             <>
@@ -82,10 +172,11 @@ export default function TicketPanel() {
                     else {
                       if (background === 'blue' && selectedSeats.length < user_sits.length) {
                         setSelectedSeats([...selectedSeats, seat]);
-                        //setBackground('green');
+                        document.getElementById(seat)!.style.backgroundColor = 'green';
                       } else {
                         setSelectedSeats([...selectedSeats.filter(n => n !== seat)]);
-                        //setBackground('blue');
+                        document.getElementById(seat)!.style.backgroundColor = 'blue';
+                        document.getElementById(seat)!.style.cursor = 'pointer';
                       }
                     }
                   };
@@ -154,18 +245,30 @@ export default function TicketPanel() {
             <Form.Select
               onChange={e => {
                 setUserAction(e.target.value);
-                setShowSections('block');
+                switch (e.target.value) {
+                  case 'Cancel Ticket':
+                    setShowCancellationSection('block');
+                    setShowSeatSections('none');
+                    break;
+                  case 'Change Seats':
+                    setShowSeatSections('block');
+                    setShowCancellationSection('block');
+                    break;
+                  default:
+                    return;
+                }
               }}
               size="sm"
             >
+              <option></option>
               <option>Cancel Ticket</option>
               <option>Change Seats</option>
             </Form.Select>
             <br />
           </Form.Group>
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-            <div style={{ display: showSections }}>
-              <h5>Verify Email for Updated Receipt:</h5>
+            <div style={{ display: showCancellationSection }}>
+              <h5>Verify Email for Updated Receipt/Cancellation:</h5>
               <Form.Label>
                 Full Name: <b>{singleTicket.full_name}</b>
               </Form.Label>{' '}
@@ -177,6 +280,7 @@ export default function TicketPanel() {
               <Button
                 onClick={e => {
                   setShowVerificationSection('block');
+                  sendVerificationEmail();
                 }}
                 variant="outline-primary"
               >
@@ -189,8 +293,16 @@ export default function TicketPanel() {
                 We have send a Verification code to {singleTicket.email}, please paste the code to verify your email
                 address:
               </Form.Label>
-              <Form.Control type="text" placeholder="paste your Verification code" />
-              <Button variant="outline-primary" style={{ marginTop: '2vh' }}>
+              <Form.Control
+                onChange={e => setUserVerificationKey(e.target.value)}
+                type="text"
+                placeholder="paste your Verification code"
+              />
+              <Button
+                onClick={e => commitUserAction(userVerificationKey)}
+                variant="outline-primary"
+                style={{ marginTop: '2vh' }}
+              >
                 Verify & Complete Action
               </Button>
             </div>

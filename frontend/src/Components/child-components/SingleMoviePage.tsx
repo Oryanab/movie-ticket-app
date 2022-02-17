@@ -133,18 +133,17 @@ export default function SingleMoviePage() {
                   if (seat === 'undefined') return;
                   const taken_sits: Array<string> = singleMovie.taken_sits;
                   const cursor = singleMovie.taken_sits.includes(seat) ? 'not-allowed' : 'pointer';
-                  let background = singleMovie.taken_sits.includes(seat) ? 'red' : 'blue';
+                  const background = singleMovie.taken_sits.includes(seat) ? 'red' : 'blue';
                   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
                     if (taken_sits.includes(seat)) alert('taken');
                     else {
-                      if (background !== 'green') {
+                      if (document.getElementById(seat)!.style.backgroundColor !== 'green') {
                         if (!selectedSeats.includes(seat)) setSelectedSeats([...selectedSeats, seat]);
-
-                        background = 'green';
+                        document.getElementById(seat)!.style.backgroundColor = 'green';
                       } else {
                         setSelectedSeats([...selectedSeats.filter(n => n !== seat)]);
-
-                        background = 'blue';
+                        document.getElementById(seat)!.style.backgroundColor = 'blue';
+                        document.getElementById(seat)!.style.cursor = 'pointer';
                       }
                     }
                   };

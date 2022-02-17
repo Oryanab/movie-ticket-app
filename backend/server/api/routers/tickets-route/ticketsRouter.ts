@@ -78,6 +78,7 @@ router.post('/get-verification', validateEmail, validateAge, (_req: express.Requ
     const verificationToken = generateVerificationKey(full_name, email);
     const mailContent: VerificationEmail = mailVerificationContent(full_name, verificationToken);
     sendMailFn(email, mailContent.subject, mailContent.text);
+
     // Send email
     res.status(200).json({ statusCode: 200, message: `Verification code was send to ${email}` });
   } catch (err) {
@@ -109,7 +110,7 @@ router.get('/view-ticket-details/:orderId', async (_req: express.Request, res: e
 router.put(
   '/change-seat',
   verificationKeyVerify,
-  checkMovieDateCompareToOrder,
+  //checkMovieDateCompareToOrder,
   checkSeatAvailability, // seats
   async (_req: express.Request, res: express.Response) => {
     try {
@@ -141,7 +142,7 @@ router.put(
 
 // User Can Cancel his ticket
 // MiddleWare Check on Date
-router.delete(
+router.post(
   '/cancel-ticket',
   verificationKeyVerify,
   checkMovieDateCompareToOrder,
