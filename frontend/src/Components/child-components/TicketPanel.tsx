@@ -3,15 +3,21 @@ import React, { useEffect, useState } from 'react';
 //import { singleTicket } from '../../Utils/movieUtils';
 //import { singleMovie } from '../../Utils/movieUtils';
 import { Button, Form, Badge } from 'react-bootstrap';
-
+import { Link } from 'react-router-dom';
+import ThankYouPage from './ThankYouPage';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../../Redux/Types/storeTypes';
 import { Tickets } from '../../Redux/Types/generalTypes';
 import { getSingleMovie } from '../../Redux/Actions/singleMovieReducerActions';
 import { getSingleTicket } from '../../Redux/Actions/singleTicketReducerActions';
+import { useNavigate } from 'react-router';
 
 export default function TicketPanel() {
+  const navigate = useNavigate();
+  function navigateToThankYouPage() {
+    navigate('/thank-you');
+  }
   const Dispatch = useDispatch();
   const singleTicket = useSelector((state: State) => state.singleTicketR);
   const singleMovie = useSelector((state: State) => state.singleMovieR);
@@ -24,19 +30,27 @@ export default function TicketPanel() {
   const [showCancellationSection, setShowCancellationSection] = useState<string>('none');
   const [showVerificationSection, setShowVerificationSection] = useState<string>('none');
   const [showInitialInfo, setShowInitialInfo] = useState<string>('none');
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([...singleTicket.seats]);
-  console.log(selectedSeats);
+
+  const [selectedSeats, setSelectedSeats] = useState<string[]>(singleTicket && [...singleTicket.seats]);
 
   const getTicketDetails = (e: React.MouseEvent<HTMLElement>) => {
     Dispatch(getSingleTicket(userOrderId));
-    const response = axios
-      .get(`http://localhost:4000/api/tickets/view-ticket-details/${userOrderId}`)
-      .then((res: any) => {
-        setSelectedSeats(res.data.message.seats);
-        Dispatch(getSingleMovie(res.data.message.movie_id));
-        setShowInitialInfo('block');
-        console.log(selectedSeats);
-      });
+    try {
+      const response = axios
+        .get(`http://localhost:4000/api/tickets/view-ticket-details/${userOrderId}`)
+        .then((res: any) => {
+          try {
+            setSelectedSeats(res.data.message.seats);
+            Dispatch(getSingleMovie(res.data.message.movie_id));
+            setShowInitialInfo('block');
+            console.log(selectedSeats);
+          } catch (err) {
+            alert('This order id is in invalid');
+          }
+        });
+    } catch (err) {
+      alert('This order id is in invalid');
+    }
   };
 
   // Functions
@@ -60,21 +74,19 @@ export default function TicketPanel() {
   };
 
   const [userVerificationKey, setUserVerificationKey] = useState<string>('');
-  // const verifyVerificationCode = async () => {
-  //   const returnedData = await axios.post(
-  //     'http://localhost:4000/api/tickets/verify',
-  //     {
-  //       full_name: singleTicket.full_name,
-  //       email: singleTicket.email,
-  //     },
-  //     {
-  //       headers: {
-  //         Authorization: `Bearer ${userVerificationKey}`,
-  //       },
-  //     }
-  //   );
-  //   alert(returnedData.data.message);
-  // };
+
+  // Functions
+  function createCookie(name: string, value: string, minutes: number) {
+    let expires;
+    if (minutes) {
+      const date = new Date();
+      date.setTime(date.getTime() + minutes * 60 * 1000);
+      expires = '; expires=' + date.toUTCString();
+    } else {
+      expires = '';
+    }
+    document.cookie = name + '=' + value + expires + ';';
+  }
 
   const commitTicketCancellation = async (authKey: string) => {
     const response = await axios.post(
@@ -92,7 +104,9 @@ export default function TicketPanel() {
         },
       }
     );
+    createCookie('tickets', authKey, 10);
     alert(response.data.message);
+    navigateToThankYouPage();
   };
 
   const commitTicketChangeSeat = async (authKey: string) => {
@@ -112,7 +126,9 @@ export default function TicketPanel() {
         },
       }
     );
+    createCookie('tickets', authKey, 10);
     alert(response.data.message);
+    navigateToThankYouPage();
   };
 
   const commitUserAction = async (authKey: string) => {
@@ -128,9 +144,9 @@ export default function TicketPanel() {
     }
   };
 
-  // Seats
+  // Seats singleTicket &&
   const allSeats = [...singleMovie.taken_sits, ...singleMovie.available_sits].sort();
-  console.log(Number(singleTicket.price) * singleTicket.seats.length);
+  //console.log(Number(singleTicket.price) * singleTicket.seats.length);
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <div
@@ -223,15 +239,15 @@ export default function TicketPanel() {
         <Form>
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
             <Form.Label>
-              Order Number: <b>{singleTicket.secret_key}</b>
+              Order Number: <b>{singleTicket && singleTicket.secret_key}</b>
             </Form.Label>{' '}
             <br />
             <Form.Label>
-              Date Purchased: <b>{new Date(singleTicket.purchase_date).toLocaleDateString()}</b>
+              Date Purchased: <b>{singleTicket && new Date(singleTicket.purchase_date).toLocaleDateString()}</b>
             </Form.Label>
             <br />
             <Form.Label>
-              Total Cost: <b>{Number(singleTicket.price) * singleTicket.seats.length}</b>
+              Total Cost: <b>{singleTicket && Number(singleTicket.price) * singleTicket.seats.length}</b>
             </Form.Label>
             <br />
             <Form.Label>
@@ -273,11 +289,11 @@ export default function TicketPanel() {
             <div style={{ display: showCancellationSection }}>
               <h5>Verify Email for Updated Receipt/Cancellation:</h5>
               <Form.Label>
-                Full Name: <b>{singleTicket.full_name}</b>
+                Full Name: <b>{singleTicket && singleTicket.full_name}</b>
               </Form.Label>{' '}
               <br />
               <Form.Label>
-                Email Address: <b>{singleTicket.email}</b>
+                Email Address: <b>{singleTicket && singleTicket.email}</b>
               </Form.Label>{' '}
               <br />
               <Button
@@ -287,14 +303,14 @@ export default function TicketPanel() {
                 }}
                 variant="outline-primary"
               >
-                Send Verification Key to {singleTicket.email}
+                Send Verification Key to {singleTicket && singleTicket.email}
               </Button>
             </div>
             <br />
             <div style={{ display: showVerificationSection }}>
               <Form.Label>
-                We have send a Verification code to {singleTicket.email}, please paste the code to verify your email
-                address:
+                We have send a Verification code to {singleTicket && singleTicket.email}, please paste the code to
+                verify your email address:
               </Form.Label>
               <Form.Control
                 onChange={e => setUserVerificationKey(e.target.value)}

@@ -4,6 +4,7 @@ import Counter from './Examples/Counter';
 import Student from './Examples/Student';
 import Navbar from './child-components/Navbar';
 import Movie from './child-components/Movies';
+import ThankYouPage from './child-components/ThankYouPage';
 import SingleMoviePage from './child-components/SingleMoviePage';
 //import { movies } from '../Utils/movieUtils';
 import TicketPanel from './child-components/TicketPanel';
@@ -30,6 +31,7 @@ export const App: React.FC = () => {
           <Route key={movie.movieId} path={`/tickets/${movie.movieId}`} element={<SingleMoviePage />} />
         ))}
         <Route path="/ticket-panel" element={<TicketPanel />} />
+        <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/" element={<Movie />} />
       </Routes>
     </Router>

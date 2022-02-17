@@ -21,13 +21,13 @@ router.get('/get-movies', async (_req: express.Request, res: express.Response) =
 
 router.post('/add-movie', movieNameValidator, async (_req: express.Request, res: express.Response) => {
   try {
-    const { movie_title, img, trailer, ganres, description, price, movie_date, time_start } = _req.body;
+    const { movie_title, img, trailer, genres, description, price, movie_date, time_start } = _req.body;
     await Movie.insertMany({
       movieId: secretId(),
       movie_title,
       img,
       trailer,
-      ganres,
+      genres,
       description,
       price,
       movie_date: new Date(movie_date),

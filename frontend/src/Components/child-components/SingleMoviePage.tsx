@@ -7,9 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../../Redux/Types/storeTypes';
 import { getSingleMovie } from '../../Redux/Actions/singleMovieReducerActions';
 import { Movies } from '../../Redux/Types/moviesReducerTypes';
+import { useNavigate } from 'react-router';
 
 export default function SingleMoviePage() {
   const link = window.location.pathname.split('/')[2];
+  const navigate = useNavigate();
+  function navigateToThankYouPage() {
+    navigate('/thank-you');
+  }
 
   //Seats;
   const singleMovie: Movies = useSelector((state: State) => state.singleMovieR);
@@ -120,6 +125,7 @@ export default function SingleMoviePage() {
       }
     );
     alert(returnedData.data.message);
+    navigateToThankYouPage();
   };
 
   return (

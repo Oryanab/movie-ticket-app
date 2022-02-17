@@ -26,6 +26,7 @@ export default function Movie() {
   const initialAvailableHours = [{ time_start: '', movieId: 'undefined' }];
   const [availableHours, setAvailableHours] = useState<Array<TimeObject>>(initialAvailableHours);
   const [movieId, setMovieId] = useState<string>('');
+  console.log(movies);
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -36,12 +37,7 @@ export default function Movie() {
               <Card.Img variant="top" height={'250px'} src={movie.data!.img} />
               <Card.Body>
                 <Card.Title>{movie.data!.movie_title}</Card.Title>
-                <Card.Text>
-                  {movie.data!.description.substr(1, 100)}...
-                  <>
-                    <a href=""> Continue Reading</a>
-                  </>
-                </Card.Text>
+                <Card.Text>{movie.data!.description.substr(1, 150)}...</Card.Text>
               </Card.Body>
               <ListGroup className="list-group-flush">
                 <ListGroupItem>
