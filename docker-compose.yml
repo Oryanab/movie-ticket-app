@@ -1,6 +1,16 @@
 version: "3.8"
 
 services:
+  seed:
+    container_name: seed
+    restart: always
+    build: ./seed
+    depends_on:
+      - mongo
+      - api
+    networks:
+      - lognet
+
   api:
     container_name: api
     restart: always
