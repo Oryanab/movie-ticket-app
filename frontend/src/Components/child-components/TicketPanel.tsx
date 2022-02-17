@@ -24,7 +24,9 @@ export default function TicketPanel() {
   const [showCancellationSection, setShowCancellationSection] = useState<string>('none');
   const [showVerificationSection, setShowVerificationSection] = useState<string>('none');
   const [showInitialInfo, setShowInitialInfo] = useState<string>('none');
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([...singleTicket.seats]);
+  console.log(selectedSeats);
+
   const getTicketDetails = (e: React.MouseEvent<HTMLElement>) => {
     Dispatch(getSingleTicket(userOrderId));
     const response = axios
@@ -33,6 +35,7 @@ export default function TicketPanel() {
         setSelectedSeats(res.data.message.seats);
         Dispatch(getSingleMovie(res.data.message.movie_id));
         setShowInitialInfo('block');
+        console.log(selectedSeats);
       });
   };
 
@@ -299,7 +302,9 @@ export default function TicketPanel() {
                 placeholder="paste your Verification code"
               />
               <Button
-                onClick={e => commitUserAction(userVerificationKey)}
+                onClick={e => {
+                  commitUserAction(userVerificationKey);
+                }}
                 variant="outline-primary"
                 style={{ marginTop: '2vh' }}
               >

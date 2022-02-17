@@ -80,10 +80,15 @@ export const arrayUniquenessChecker = (arr: Array<any>, target: Array<any>): boo
 };
 
 export const userUpdateSeats = async (seats: Array<string>, prevSeats: Array<string>, orderId: string) => {
-  for (let seat of seats) {
-    await Ticket.findOneAndUpdate({ secret_key: orderId }, { $push: { seats: seat } });
-  }
-  for (let seat of prevSeats) {
-    await Ticket.findOneAndUpdate({ secret_key: orderId }, { $pull: { seats: seat } });
-  }
+  // for (let seat of seats) {
+  //   await Ticket.findOneAndUpdate({ secret_key: orderId }, { $push: { seats: seat } });
+  // }
+  // console.log(await Ticket.findOne({ secret_key: orderId }));
+
+  // for (let seat of prevSeats) {
+  //   await Ticket.findOneAndUpdate({ secret_key: orderId }, { $pull: { seats: seat } });
+  // }
+  await Ticket.findOneAndUpdate({ secret_key: orderId }, { $set: { seats: seats } });
+
+  console.log(await Ticket.findOne({ secret_key: orderId }), prevSeats);
 };

@@ -110,13 +110,13 @@ router.get('/view-ticket-details/:orderId', async (_req: express.Request, res: e
 router.put(
   '/change-seat',
   verificationKeyVerify,
-  //checkMovieDateCompareToOrder,
-  checkSeatAvailability, // seats
+  checkMovieDateCompareToOrder,
+  //checkSeatAvailability, // seats
   async (_req: express.Request, res: express.Response) => {
     try {
-      const { email, seats, prevSeats, orderId, movieId } = _req.body;
-      await updateMovieSeats('remove', prevSeats, movieId);
-      await updateMovieSeats('add', seats, movieId);
+      const { email, seats, prevSeats, orderId, movie_id } = _req.body;
+      await updateMovieSeats('remove', prevSeats, movie_id);
+      await updateMovieSeats('add', seats, movie_id);
       await userUpdateSeats(seats, prevSeats, orderId);
       const currentTicket = await Ticket.findOne({ secret_key: orderId });
       const mailContent: VerificationEmail = mailSuccessfulPurchase(
