@@ -12,9 +12,11 @@ import { Tickets } from '../../Redux/Types/generalTypes';
 import { getSingleMovie } from '../../Redux/Actions/singleMovieReducerActions';
 import { getSingleTicket } from '../../Redux/Actions/singleTicketReducerActions';
 import { useNavigate } from 'react-router';
+import { Notyf } from 'notyf';
 
 export default function TicketPanel() {
   const navigate = useNavigate();
+  const notyf = new Notyf();
   function navigateToThankYouPage() {
     navigate('/thank-you');
   }
@@ -36,20 +38,19 @@ export default function TicketPanel() {
   const getTicketDetails = (e: React.MouseEvent<HTMLElement>) => {
     Dispatch(getSingleTicket(userOrderId));
     try {
-      const response = axios
-        .get(`http://localhost:4000/api/tickets/view-ticket-details/${userOrderId}`)
-        .then((res: any) => {
-          try {
-            setSelectedSeats(res.data.message.seats);
-            Dispatch(getSingleMovie(res.data.message.movie_id));
-            setShowInitialInfo('block');
-            console.log(selectedSeats);
-          } catch (err) {
-            alert('This order id is in invalid');
-          }
-        });
+      const response = axios.get(`http://api:4000/api/tickets/view-ticket-details/${userOrderId}`).then((res: any) => {
+        try {
+          setSelectedSeats(res.data.message.seats);
+          Dispatch(getSingleMovie(res.data.message.movie_id));
+          setShowInitialInfo('block');
+          notyf.success(`Success, Welcome back ${res.data.message.full_name}`);
+          console.log(selectedSeats);
+        } catch (err) {
+          notyf.error('This order id is in invalid');
+        }
+      });
     } catch (err) {
-      alert('This order id is in invalid');
+      notyf.error('This order id is in invalid');
     }
   };
 
@@ -61,16 +62,16 @@ export default function TicketPanel() {
       selectedSeats.length === singleTicket.seats.length &&
       selectedSeats.sort().toString() == singleTicket.seats.sort().toString()
     ) {
-      alert('must select the amount of seats at in in your receipt, at least one must be different!');
+      notyf.error('must select the amount of seats at in in your receipt, at least one must be different!');
       return;
     }
-    const sendMail = await axios.post('http://localhost:4000/api/tickets/get-verification', {
+    const sendMail = await axios.post('http://api:4000/api/tickets/get-verification', {
       full_name: singleTicket.full_name,
       email: singleTicket.email,
       age: 20,
     });
 
-    alert(sendMail.data.message);
+    notyf.success(sendMail.data.message);
   };
 
   const [userVerificationKey, setUserVerificationKey] = useState<string>('');
@@ -90,7 +91,7 @@ export default function TicketPanel() {
 
   const commitTicketCancellation = async (authKey: string) => {
     const response = await axios.post(
-      'http://localhost:4000/api/tickets/cancel-ticket',
+      'http://api:4000/api/tickets/cancel-ticket',
       {
         movieId: singleTicket.movie_id,
         full_name: singleTicket.full_name,
@@ -105,13 +106,13 @@ export default function TicketPanel() {
       }
     );
     createCookie('tickets', authKey, 10);
-    alert(response.data.message);
+    notyf.success(response.data.message);
     navigateToThankYouPage();
   };
 
   const commitTicketChangeSeat = async (authKey: string) => {
     const response = await axios.put(
-      'http://localhost:4000/api/tickets/change-seat',
+      'http://api:4000/api/tickets/change-seat',
       {
         movie_id: singleTicket.movie_id,
         full_name: singleTicket.full_name,
@@ -127,7 +128,7 @@ export default function TicketPanel() {
       }
     );
     createCookie('tickets', authKey, 10);
-    alert(response.data.message);
+    notyf.success(response.data.message);
     navigateToThankYouPage();
   };
 
@@ -164,7 +165,7 @@ export default function TicketPanel() {
             />
             <Button
               onClick={(e: any) => {
-                if (userOrderId.length !== 36) alert('invalid');
+                if (userOrderId.length !== 36) notyf.error('invalid age');
                 else getTicketDetails(e.target.value);
               }}
               style={{ marginTop: '2vh' }}
@@ -187,7 +188,7 @@ export default function TicketPanel() {
                   const background = user_sits.includes(seat) ? 'orange' : taken_sits.includes(seat) ? 'red' : 'blue';
 
                   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-                    if (taken_sits.includes(seat) && !user_sits.includes(seat)) alert('taken');
+                    if (taken_sits.includes(seat) && !user_sits.includes(seat)) notyf.error(`seat ${seat} is taken`);
                     else {
                       if (background === 'blue' && selectedSeats.length < user_sits.length) {
                         setSelectedSeats([...selectedSeats, seat]);

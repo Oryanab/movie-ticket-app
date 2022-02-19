@@ -8,9 +8,11 @@ import { State } from '../../Redux/Types/storeTypes';
 import { getSingleMovie } from '../../Redux/Actions/singleMovieReducerActions';
 import { Movies } from '../../Redux/Types/moviesReducerTypes';
 import { useNavigate } from 'react-router';
+import { Notyf } from 'notyf';
 
 export default function SingleMoviePage() {
   const link = window.location.pathname.split('/')[2];
+  const notyf = new Notyf();
   const navigate = useNavigate();
   function navigateToThankYouPage() {
     navigate('/thank-you');
@@ -73,20 +75,20 @@ export default function SingleMoviePage() {
 
   const sendVerificationEmail = async () => {
     if (userEmail.length === 0 || userFullName.length === 0) {
-      alert('must insert full name, email and age');
+      notyf.error('must insert full name, email and age');
       return;
     }
-    const sendMail = await axios.post('http://localhost:4000/api/tickets/get-verification', {
+    const sendMail = await axios.post('http://api:4000/api/tickets/get-verification', {
       full_name: userFullName,
       email: userEmail,
       age: userAge,
     });
-    alert(sendMail.data.message);
+    notyf.success(sendMail.data.message);
   };
 
   const verifyVerificationCode = async () => {
     const returnedData = await axios.post(
-      'http://localhost:4000/api/tickets/verify',
+      'http://api:4000/api/tickets/verify',
       {
         full_name: userFullName,
         email: userEmail,
@@ -97,13 +99,13 @@ export default function SingleMoviePage() {
         },
       }
     );
-    alert(returnedData.data.message);
+    notyf.success(returnedData.data.message);
     createCookie('tickets', returnedData.data.process_token, 10);
   };
 
   const sendPaymentDetails = async () => {
     const returnedData = await axios.post(
-      'http://localhost:4000/api/tickets/purchase-ticket',
+      'http://api:4000/api/tickets/purchase-ticket',
       {
         full_name: userFullName,
         movie_id: link,
@@ -124,7 +126,7 @@ export default function SingleMoviePage() {
         },
       }
     );
-    alert(returnedData.data.message);
+    notyf.success(returnedData.data.message);
     navigateToThankYouPage();
   };
 
@@ -141,7 +143,7 @@ export default function SingleMoviePage() {
                   const cursor = singleMovie.taken_sits.includes(seat) ? 'not-allowed' : 'pointer';
                   const background = singleMovie.taken_sits.includes(seat) ? 'red' : 'blue';
                   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-                    if (taken_sits.includes(seat)) alert('taken');
+                    if (taken_sits.includes(seat)) notyf.error(`seat ${seat} is taken`);
                     else {
                       if (document.getElementById(seat)!.style.backgroundColor !== 'green') {
                         if (!selectedSeats.includes(seat)) setSelectedSeats([...selectedSeats, seat]);
@@ -249,7 +251,7 @@ export default function SingleMoviePage() {
 
                     setShowVerificationSection('block');
                   } else {
-                    alert('too young');
+                    notyf.error('sorry, must be over 18 to order ticket');
                     setShowPaymentSection('none');
                   }
                 }}

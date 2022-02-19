@@ -1,6 +1,22 @@
 version: "3.8"
 
 services:
+  api:
+    container_name: api
+    restart: always
+    build: ./backend
+    environment:
+      MONGO_URI: *your-mongo-uri*
+      MY_EMAIL_ADDR: *your-email-address*
+      MY_EMAIL_PASS: *your-email's-password*
+      SECRET: *64-bit-hash-key*
+    ports:
+      - 4000:4000
+    depends_on:
+      - mongo
+    networks:
+      - lognet
+
   seed:
     container_name: seed
     restart: always
@@ -8,17 +24,6 @@ services:
     depends_on:
       - mongo
       - api
-    networks:
-      - lognet
-
-  api:
-    container_name: api
-    restart: always
-    build: ./backend
-    ports:
-      - 4000:4000
-    depends_on:
-      - mongo
     networks:
       - lognet
 
@@ -55,6 +60,8 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    depends_on:
+      - mongo
     networks:
       - lognet
 

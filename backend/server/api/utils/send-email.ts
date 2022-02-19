@@ -63,7 +63,7 @@ export const mailSuccessfulPurchase = (
     date: ${new Date(movie_date).toLocaleDateString()}\n 
     starting time: ${time_start}\n 
     seats: ${seats.toString()}\n
-    price: ${price}\n 
+    price: ${price * seats.length}LIS\n 
     Order number: ${secret_key}\n`,
   };
   return SuccessfulPurchaseMailContent;

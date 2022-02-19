@@ -1,10 +1,11 @@
 class Seed():
     def drop_movies_table(self):
         import pymongo
-        my_client = pymongo.MongoClient("mongodb://root:example@localhost:27017/MovieDb?authSource=admin")
+        my_client = pymongo.MongoClient("mongodb://root:example@mongo:27017/MovieDb?authSource=admin")
         database = my_client["MovieDb"]
         collection = database["movies"]
         collection.drop()
+        print('Deleted Previous Data')
 
     def getAllDatesOfMovies(self, movie_title, image, trailer_link,genres, description, price):
         from datetime import datetime, timedelta
@@ -15,7 +16,7 @@ class Seed():
         for date in range(0, 5):
             for start_time in movie_start_time_list:
                 new_date = tomorrow + timedelta(days=date)
-                seed_api = requests.post("http://localhost:4000/api/movies/add-movie", data=json.dumps({
+                seed_api = requests.post("http://api:4000/api/movies/add-movie", data=json.dumps({
                     "movie_title": movie_title,
                     "img": image,
                     "trailer": trailer_link,
@@ -53,6 +54,7 @@ class Seed():
             movie_page = movie_div.findNext(name="a").get('href')
             trailer_link = self.get_movies_trailer(f"https://www.imdb.com{movie_page}", title)
             self.getAllDatesOfMovies(title,image, trailer_link,genres, description, 50)
+        print('Finished adding updated data')
 
 if __name__ == "__main__":
     seed = Seed()

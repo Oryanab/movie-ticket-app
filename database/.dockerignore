@@ -1,2 +1,4 @@
 db
 commands.md
+.gitignore
+docker-compose.yml

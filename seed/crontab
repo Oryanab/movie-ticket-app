@@ -1,2 +1,2 @@
-*/3 * * * * python /main.py >> /var/log/cron.log
+* * */1 * * python /main.py >> /var/log/cron.log
 # Empty Line 

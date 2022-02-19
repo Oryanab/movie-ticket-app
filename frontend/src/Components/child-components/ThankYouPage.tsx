@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router';
+import { Notyf } from 'notyf';
 
 export default function ThankYouPage() {
+  const navigate = useNavigate();
+  const notyf = new Notyf();
+  function navigateToHomePage() {
+    navigate('/');
+    notyf.error('You do not permissions to view this page');
+  }
   function getCookie(cname: string) {
     const name = cname + '=';
     const decodedCookie = decodeURIComponent(document.cookie);
@@ -20,7 +28,7 @@ export default function ThankYouPage() {
 
   return (
     <>
-      {getCookie('tickets') && (
+      {getCookie('tickets') ? (
         <div
           style={{
             margin: 'auto',
@@ -38,7 +46,7 @@ export default function ThankYouPage() {
             paddingTop: '20vh',
           }}
         >
-          <h1>Thank You {name}!</h1>
+          <h1>Thank You!</h1>
           <h5>Your receipt and information was sent via mail </h5>
           <Button href="/" style={{ margin: '0.2vw' }} variant="outline-dark">
             Visit Home Page
@@ -47,6 +55,8 @@ export default function ThankYouPage() {
             View Your Tickets
           </Button>
         </div>
+      ) : (
+        navigateToHomePage()
       )}
     </>
   );

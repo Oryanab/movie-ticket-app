@@ -1,7 +1,17 @@
-FROM python:3.6.12-alpine3.12
+FROM python:latest
 
+# Add crontab file in the cron directory
+ADD crontab /etc/cron.d/crontab
 COPY . .
+RUN pip install -r requirements.txt
+# Give execution rights on the cron job
 
-RUN crontab crontab
+# Create the log file to be able to run tail
+RUN touch /var/log/cron.log
 
-CMD ["crond", "-f"]
+#Install Cron
+RUN apt-get update
+RUN apt-get -y install cron
+
+# Run the command on container startup
+CMD service cron start ; tail -f /var/log/cron.log
