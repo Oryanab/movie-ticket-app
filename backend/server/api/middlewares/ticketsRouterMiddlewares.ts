@@ -9,7 +9,6 @@ import { Tickets } from '../../types/types';
 
 // Middleware function for Tickets Route
 export const verificationKeyVerify = (_req: Request, res: Response, next: NextFunction) => {
-  //const { verificationKey } = _req.body;
   const authHeader: string = _req.headers['authorization']!;
   const token = authHeader && authHeader.split(' ')[1];
   if (token === null) {
@@ -54,7 +53,7 @@ export const validateCreditCardDetails = (_req: Request, res: Response, next: Ne
   const { card_number, card_expiration_date, national_id, ccv } = _req.body;
   if (
     checkNumbersAndLengths(card_number, 16) &&
-    checkExpirationDate(new Date(card_expiration_date), new Date()) &&
+    checkExpirationDate(new Date(`01/${card_expiration_date}`)) &&
     checkNumbersAndLengths(national_id, 9) &&
     checkNumbersAndLengths(ccv, 3)
   ) {
@@ -69,7 +68,6 @@ export const checkSeatAvailability = async (_req: Request, res: Response, next: 
   const { seats, movie_id } = _req.body;
   try {
     const currentMovie = await Movie.findOne({ movieId: movie_id });
-    console.log(currentMovie);
     arrayUniquenessChecker(currentMovie['available_sits'], seats)
       ? next()
       : res.status(403).json({ message: 'these sit are taken' });
@@ -83,9 +81,7 @@ export const checkSeatAvailability = async (_req: Request, res: Response, next: 
 export const checkMovieDateCompareToOrder = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const currentTicket: Tickets = await Ticket.findOne({ secret_key: _req.body.orderId });
-    console.log(currentTicket);
-
-    checkExpirationDate(currentTicket.movie_date, currentTicket.purchase_date)
+    checkExpirationDate(currentTicket.movie_date)
       ? next()
       : res.status(403).json({ message: 'this action is no longer available' });
   } catch (err) {

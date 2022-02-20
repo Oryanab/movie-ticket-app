@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
-//import { singleMovie } from '../../Utils/movieUtils';
-import { Container, Row, Col, Button, Form, Badge } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Button, Form, Badge } from 'react-bootstrap';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../../Redux/Types/storeTypes';
@@ -24,10 +22,8 @@ export default function SingleMoviePage() {
 
   useEffect(() => {
     Dispatch(getSingleMovie(link));
-    //setAllSeats(prevState => [...prevState, ...singleMovie.taken_sits, ...singleMovie.available_sits]);
   }, []);
 
-  ///setAllSeats(singleMovie.available_sits.concat(singleMovie.taken_sits).sort());
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   // Form
   const [userEmail, setUserEmail] = useState<string>('');
@@ -42,7 +38,7 @@ export default function SingleMoviePage() {
   // Flags
   const [showVerificationSection, setShowVerificationSection] = useState<string>('none');
   const [showPaymentSection, setShowPaymentSection] = useState<string>('none');
-  const arr = [...singleMovie.taken_sits, ...singleMovie.available_sits].sort();
+  const entireSeatsArray = [...singleMovie.taken_sits, ...singleMovie.available_sits].sort();
 
   // Functions
   function createCookie(name: string, value: string, minutes: number) {
@@ -87,20 +83,26 @@ export default function SingleMoviePage() {
   };
 
   const verifyVerificationCode = async () => {
-    const returnedData = await axios.post(
-      'http://localhost:4000/api/tickets/verify',
-      {
-        full_name: userFullName,
-        email: userEmail,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${userVerificationKey}`,
+    try {
+      const returnedData = await axios.post(
+        'http://localhost:4000/api/tickets/verify',
+        {
+          full_name: userFullName,
+          email: userEmail,
         },
-      }
-    );
-    notyf.success(returnedData.data.message);
-    createCookie('tickets', returnedData.data.process_token, 10);
+        {
+          headers: {
+            Authorization: `Bearer ${userVerificationKey}`,
+          },
+        }
+      );
+      notyf.success(returnedData.data.message);
+      createCookie('tickets', returnedData.data.process_token, 10);
+      setShowPaymentSection('block');
+    } catch (err: any) {
+      setShowPaymentSection('none');
+      notyf.error('invalid verification code');
+    }
   };
 
   const sendPaymentDetails = async () => {
@@ -130,7 +132,7 @@ export default function SingleMoviePage() {
       notyf.success(returnedData.data.message);
       navigateToThankYouPage();
     } catch (err) {
-      notyf.error('server error, please try again');
+      notyf.error('invalid payment details');
     }
   };
 
@@ -141,7 +143,7 @@ export default function SingleMoviePage() {
         <div style={{ display: 'inline-grid', gridTemplateColumns: 'auto auto auto auto auto auto auto auto' }}>
           <>
             {singleMovie
-              ? arr.map((seat: string) => {
+              ? entireSeatsArray.map((seat: string) => {
                   if (seat === 'undefined') return;
                   const taken_sits: Array<string> = singleMovie.taken_sits;
                   const cursor = singleMovie.taken_sits.includes(seat) ? 'not-allowed' : 'pointer';
@@ -276,7 +278,6 @@ export default function SingleMoviePage() {
               />
               <Button
                 onClick={e => {
-                  userVerificationKey.length > 0 ? setShowPaymentSection('block') : setShowPaymentSection('none');
                   verifyVerificationCode();
                 }}
                 variant="outline-primary"
@@ -304,7 +305,7 @@ export default function SingleMoviePage() {
                 placeholder="**** **** **** ****"
               />
               <Form.Label>Card Expiration Date:</Form.Label>
-              <Form.Control onChange={e => setUserCardExpirationDate(e.target.value)} type="text" placeholder="**/**" />
+              <Form.Control onChange={e => setUserCardExpirationDate(e.target.value)} type="text" placeholder="MM/YY" />
               <Form.Label>CCV:</Form.Label>
               <Form.Control onChange={e => setUserCcv(e.target.value)} type="text" placeholder="***" />
               <Button

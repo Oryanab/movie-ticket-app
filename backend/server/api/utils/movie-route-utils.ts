@@ -12,7 +12,6 @@ export const returnAvailableSeats = () => {
 };
 
 export const updateMovieSeats = async (action: string, seats: Array<string>, movie_id: string) => {
-  console.log(movie_id, seats);
   switch (action) {
     case 'add':
       try {

@@ -14,13 +14,6 @@ export const generateVerificationKey = (full_name: string, email: string) => {
   return accessToken;
 };
 
-// export const generateActionKey = (full_name: string, email: string, verified: boolean) => {
-//   const accessToken = jwt.sign({ full_name, email, verified }, process.env.SECRET!, {
-//     expiresIn: '10m',
-//   });
-//   return accessToken;
-// };
-
 // Add new ticket
 export const AddTicket = async (
   full_name: string,
@@ -53,13 +46,11 @@ export const AddTicket = async (
 };
 
 // Check Card Expiration Date
-export const checkExpirationDate = (card_expiration_date: Date, maxDate: Date) => {
-  let diff = maxDate.getTime() - card_expiration_date.getTime();
-  if (diff < 0) {
+export const checkExpirationDate = (movie_date: Date) => {
+  if (new Date() <= movie_date) {
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
 // Check Card/National Id/CCV are numbers and length
@@ -80,15 +71,6 @@ export const arrayUniquenessChecker = (arr: Array<any>, target: Array<any>): boo
 };
 
 export const userUpdateSeats = async (seats: Array<string>, prevSeats: Array<string>, orderId: string) => {
-  // for (let seat of seats) {
-  //   await Ticket.findOneAndUpdate({ secret_key: orderId }, { $push: { seats: seat } });
-  // }
-  // console.log(await Ticket.findOne({ secret_key: orderId }));
-
-  // for (let seat of prevSeats) {
-  //   await Ticket.findOneAndUpdate({ secret_key: orderId }, { $pull: { seats: seat } });
-  // }
   await Ticket.findOneAndUpdate({ secret_key: orderId }, { $set: { seats: seats } });
-
-  console.log(await Ticket.findOne({ secret_key: orderId }), prevSeats);
+  console.log({ orderId: orderId, 'previous seats': prevSeats, 'updated seats': seats });
 };

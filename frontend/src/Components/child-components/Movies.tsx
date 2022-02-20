@@ -1,19 +1,10 @@
-import { AnyRecord } from 'dns';
 import React, { useState, useEffect } from 'react';
 import { Card, ListGroupItem, ListGroup, Form, Button } from 'react-bootstrap';
 import { Movies, TimeObject, DateItem } from '../../Redux/Types/generalTypes';
 import { createUniqueMovieItemArray, createUniqueMovieDateArray } from '../../Utils/movieUtils';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../../Redux/Types/storeTypes';
 import { getMoviesList } from '../../Redux/Actions/moviesReducerActions';
-//import { movies } from '../../Utils/movieUtils';
-
-// import axios from 'axios';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { State } from '../../Redux/Types/storeTypes';
-// const Dispatch = useDispatch();
-// const students = useSelector((state: State) => state.students);
 
 export default function Movie() {
   // Reducer States:
@@ -26,7 +17,6 @@ export default function Movie() {
   const initialAvailableHours = [{ time_start: '', movieId: 'undefined' }];
   const [availableHours, setAvailableHours] = useState<Array<TimeObject>>(initialAvailableHours);
   const [movieId, setMovieId] = useState<string>('');
-  console.log(movies);
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -49,24 +39,6 @@ export default function Movie() {
               </ListGroup>
               <Card.Body>
                 <p style={{ marginTop: '-1vh' }}>Choose date/time:</p>
-                {/* <Form.Control
-                  id={movie.data!.movie_title}
-                  style={{ marginTop: '-1vh' }}
-                  onChange={e => {
-                    const chosenDate = e.target.value;
-                    setSelectedDate(new Date(chosenDate).toLocaleDateString());
-                    if (movie.data!.movie_date.toLocaleDateString() === selectedDate) {
-                      setAvailableHours(
-                        createUniqueMovieDateArray(movie).find(
-                          item => new Date(item.key).toLocaleDateString() === selectedDate
-                        )?.value
-                      );
-                    }
-                  }}
-                  size="sm"
-                  type="date"
-                  placeholder="Small text"
-                /> */}
                 <Form.Select
                   onChange={(e: any) => {
                     const chosenDate = e.target.value;

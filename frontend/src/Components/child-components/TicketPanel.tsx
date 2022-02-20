@@ -1,14 +1,9 @@
 // Imports
-import React, { useEffect, useState } from 'react';
-//import { singleTicket } from '../../Utils/movieUtils';
-//import { singleMovie } from '../../Utils/movieUtils';
+import React, { useState } from 'react';
 import { Button, Form, Badge } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import ThankYouPage from './ThankYouPage';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../../Redux/Types/storeTypes';
-import { Tickets } from '../../Redux/Types/generalTypes';
 import { getSingleMovie } from '../../Redux/Actions/singleMovieReducerActions';
 import { getSingleTicket } from '../../Redux/Actions/singleTicketReducerActions';
 import { useNavigate } from 'react-router';
@@ -46,7 +41,6 @@ export default function TicketPanel() {
             Dispatch(getSingleMovie(res.data.message.movie_id));
             setShowInitialInfo('block');
             notyf.success(`Success, Welcome back ${res.data.message.full_name}`);
-            console.log(selectedSeats);
           } catch (err) {
             notyf.error('This order id is in invalid');
           }
@@ -72,7 +66,7 @@ export default function TicketPanel() {
       email: singleTicket.email,
       age: 20,
     });
-
+    setShowVerificationSection('block');
     notyf.success(sendMail.data.message);
   };
 
@@ -92,46 +86,56 @@ export default function TicketPanel() {
   }
 
   const commitTicketCancellation = async (authKey: string) => {
-    const response = await axios.post(
-      'http://localhost:4000/api/tickets/cancel-ticket',
-      {
-        movieId: singleTicket.movie_id,
-        full_name: singleTicket.full_name,
-        email: singleTicket.email,
-        seats: singleTicket.seats,
-        orderId: singleTicket.secret_key,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${authKey}`,
+    try {
+      const response = await axios.post(
+        'http://localhost:4000/api/tickets/cancel-ticket',
+        {
+          movieId: singleTicket.movie_id,
+          full_name: singleTicket.full_name,
+          email: singleTicket.email,
+          seats: singleTicket.seats,
+          orderId: singleTicket.secret_key,
         },
-      }
-    );
-    createCookie('tickets', authKey, 10);
-    notyf.success(response.data.message);
-    navigateToThankYouPage();
+        {
+          headers: {
+            Authorization: `Bearer ${authKey}`,
+          },
+        }
+      );
+      createCookie('tickets', authKey, 10);
+      notyf.success(response.data.message);
+      navigateToThankYouPage();
+    } catch (err) {
+      notyf.error('This action is only valid 48 hours in before your movie starts');
+      notyf.error('otherwise, make sure you have inserted your verification code correctly');
+    }
   };
 
   const commitTicketChangeSeat = async (authKey: string) => {
-    const response = await axios.put(
-      'http://localhost:4000/api/tickets/change-seat',
-      {
-        movie_id: singleTicket.movie_id,
-        full_name: singleTicket.full_name,
-        email: singleTicket.email,
-        prevSeats: singleTicket.seats,
-        seats: selectedSeats,
-        orderId: singleTicket.secret_key,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${authKey}`,
+    try {
+      const response = await axios.put(
+        'http://localhost:4000/api/tickets/change-seat',
+        {
+          movie_id: singleTicket.movie_id,
+          full_name: singleTicket.full_name,
+          email: singleTicket.email,
+          prevSeats: singleTicket.seats,
+          seats: selectedSeats,
+          orderId: singleTicket.secret_key,
         },
-      }
-    );
-    createCookie('tickets', authKey, 10);
-    notyf.success(response.data.message);
-    navigateToThankYouPage();
+        {
+          headers: {
+            Authorization: `Bearer ${authKey}`,
+          },
+        }
+      );
+      createCookie('tickets', authKey, 10);
+      notyf.success(response.data.message);
+      navigateToThankYouPage();
+    } catch (err) {
+      notyf.error('This action is only valid 48 hours in before your movie starts');
+      notyf.error('otherwise, make sure you have inserted your verification code correctly');
+    }
   };
 
   const commitUserAction = async (authKey: string) => {
@@ -149,7 +153,6 @@ export default function TicketPanel() {
 
   // Seats singleTicket &&
   const allSeats = [...singleMovie.taken_sits, ...singleMovie.available_sits].sort();
-  //console.log(Number(singleTicket.price) * singleTicket.seats.length);
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <div
@@ -301,7 +304,6 @@ export default function TicketPanel() {
               <br />
               <Button
                 onClick={e => {
-                  setShowVerificationSection('block');
                   sendVerificationEmail();
                 }}
                 variant="outline-primary"

@@ -1,14 +1,10 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Counter from './Examples/Counter';
-import Student from './Examples/Student';
 import Navbar from './child-components/Navbar';
 import Movie from './child-components/Movies';
 import ThankYouPage from './child-components/ThankYouPage';
 import SingleMoviePage from './child-components/SingleMoviePage';
-//import { movies } from '../Utils/movieUtils';
 import TicketPanel from './child-components/TicketPanel';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../Redux/Types/storeTypes';
 import { getMoviesList } from '../Redux/Actions/moviesReducerActions';
@@ -25,8 +21,6 @@ export const App: React.FC = () => {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/student" element={<Student />} />
-        <Route path="/counter" element={<Counter />} />
         {movies.map(movie => (
           <Route key={movie.movieId} path={`/tickets/${movie.movieId}`} element={<SingleMoviePage />} />
         ))}
