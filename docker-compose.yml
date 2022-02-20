@@ -3,7 +3,7 @@ version: "3.8"
 services:
   mongo:
     image: mongo:latest
-    restart: unless-stopped
+    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -16,13 +16,13 @@ services:
 
   api:
     container_name: api
-    restart: unless-stopped
+    restart: always
     build: ./backend
     environment:
       MONGO_URI: *your-mongo-uri*
       MY_EMAIL_ADDR: *your-email-address*
       MY_EMAIL_PASS: *your-email's-password*
-      SECRET: *64-bit-hash-key* 
+      SECRET: *64-bit-hash-key*
     ports:
       - 4000:4000
     depends_on:
@@ -33,6 +33,9 @@ services:
   seed:
     container_name: seed
     build: ./seed
+    depends_on:
+      - api
+      - mongo
     networks:
       - lognet
 

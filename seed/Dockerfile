@@ -14,4 +14,4 @@ RUN apt-get update
 RUN apt-get -y install cron
 
 # Run the command on container startup
-CMD service cron start ; tail -f /var/log/cron.log 
+CMD tail -f /var/log/cron.log 
