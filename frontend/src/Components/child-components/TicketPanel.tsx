@@ -38,17 +38,19 @@ export default function TicketPanel() {
   const getTicketDetails = (e: React.MouseEvent<HTMLElement>) => {
     Dispatch(getSingleTicket(userOrderId));
     try {
-      const response = axios.get(`http://api:4000/api/tickets/view-ticket-details/${userOrderId}`).then((res: any) => {
-        try {
-          setSelectedSeats(res.data.message.seats);
-          Dispatch(getSingleMovie(res.data.message.movie_id));
-          setShowInitialInfo('block');
-          notyf.success(`Success, Welcome back ${res.data.message.full_name}`);
-          console.log(selectedSeats);
-        } catch (err) {
-          notyf.error('This order id is in invalid');
-        }
-      });
+      const response = axios
+        .get(`http://localhost:4000/api/tickets/view-ticket-details/${userOrderId}`)
+        .then((res: any) => {
+          try {
+            setSelectedSeats(res.data.message.seats);
+            Dispatch(getSingleMovie(res.data.message.movie_id));
+            setShowInitialInfo('block');
+            notyf.success(`Success, Welcome back ${res.data.message.full_name}`);
+            console.log(selectedSeats);
+          } catch (err) {
+            notyf.error('This order id is in invalid');
+          }
+        });
     } catch (err) {
       notyf.error('This order id is in invalid');
     }
@@ -65,7 +67,7 @@ export default function TicketPanel() {
       notyf.error('must select the amount of seats at in in your receipt, at least one must be different!');
       return;
     }
-    const sendMail = await axios.post('http://api:4000/api/tickets/get-verification', {
+    const sendMail = await axios.post('http://localhost:4000/api/tickets/get-verification', {
       full_name: singleTicket.full_name,
       email: singleTicket.email,
       age: 20,
@@ -91,7 +93,7 @@ export default function TicketPanel() {
 
   const commitTicketCancellation = async (authKey: string) => {
     const response = await axios.post(
-      'http://api:4000/api/tickets/cancel-ticket',
+      'http://localhost:4000/api/tickets/cancel-ticket',
       {
         movieId: singleTicket.movie_id,
         full_name: singleTicket.full_name,
@@ -112,7 +114,7 @@ export default function TicketPanel() {
 
   const commitTicketChangeSeat = async (authKey: string) => {
     const response = await axios.put(
-      'http://api:4000/api/tickets/change-seat',
+      'http://localhost:4000/api/tickets/change-seat',
       {
         movie_id: singleTicket.movie_id,
         full_name: singleTicket.full_name,
@@ -165,7 +167,7 @@ export default function TicketPanel() {
             />
             <Button
               onClick={(e: any) => {
-                if (userOrderId.length !== 36) notyf.error('invalid age');
+                if (userOrderId.length !== 36) notyf.error('invalid order ID');
                 else getTicketDetails(e.target.value);
               }}
               style={{ marginTop: '2vh' }}

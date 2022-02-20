@@ -1,46 +1,9 @@
 version: "3.8"
 
 services:
-  api:
-    container_name: api
-    restart: always
-    build: ./backend
-    environment:
-      MONGO_URI: *your-mongo-uri*
-      MY_EMAIL_ADDR: *your-email-address*
-      MY_EMAIL_PASS: *your-email's-password*
-      SECRET: *64-bit-hash-key*
-    ports:
-      - 4000:4000
-    depends_on:
-      - mongo
-    networks:
-      - lognet
-
-  seed:
-    container_name: seed
-    restart: always
-    build: ./seed
-    depends_on:
-      - mongo
-      - api
-    networks:
-      - lognet
-
-  client:
-    container_name: client
-    restart: always
-    build: ./frontend
-    ports:
-      - 3000:3000
-    depends_on:
-      - api
-    networks:
-      - lognet
-
   mongo:
     image: mongo:latest
-    restart: always
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -51,9 +14,41 @@ services:
     networks:
       - lognet
 
+  api:
+    container_name: api
+    restart: unless-stopped
+    build: ./backend
+    environment:
+      MONGO_URI: *your-mongo-uri*
+      MY_EMAIL_ADDR: *your-email-address*
+      MY_EMAIL_PASS: *your-email's-password*
+      SECRET: *64-bit-hash-key* 
+    ports:
+      - 4000:4000
+    depends_on:
+      - mongo
+    networks:
+      - lognet
+
+  seed:
+    container_name: seed
+    build: ./seed
+    networks:
+      - lognet
+
+  client:
+    container_name: client
+    build: ./frontend
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
+    networks:
+      - lognet
+
   mongo-express:
     image: mongo-express
-    restart: always
+    restart: unless-stopped
     ports:
       - 8081:8081
     environment:

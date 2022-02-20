@@ -78,7 +78,7 @@ export default function SingleMoviePage() {
       notyf.error('must insert full name, email and age');
       return;
     }
-    const sendMail = await axios.post('http://api:4000/api/tickets/get-verification', {
+    const sendMail = await axios.post('http://localhost:4000/api/tickets/get-verification', {
       full_name: userFullName,
       email: userEmail,
       age: userAge,
@@ -88,7 +88,7 @@ export default function SingleMoviePage() {
 
   const verifyVerificationCode = async () => {
     const returnedData = await axios.post(
-      'http://api:4000/api/tickets/verify',
+      'http://localhost:4000/api/tickets/verify',
       {
         full_name: userFullName,
         email: userEmail,
@@ -104,30 +104,34 @@ export default function SingleMoviePage() {
   };
 
   const sendPaymentDetails = async () => {
-    const returnedData = await axios.post(
-      'http://api:4000/api/tickets/purchase-ticket',
-      {
-        full_name: userFullName,
-        movie_id: link,
-        email: userEmail,
-        movie_title: singleMovie.movie_title,
-        seats: selectedSeats,
-        price: singleMovie.price,
-        movie_date: singleMovie.movie_date,
-        time_start: singleMovie.time_start,
-        card_number: userCreditCardNumber,
-        card_expiration_date: userCardExpirationDate,
-        national_id: userNationalId,
-        ccv: userCcv,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${getCookie('tickets')}`,
+    try {
+      const returnedData = await axios.post(
+        'http://localhost:4000/api/tickets/purchase-ticket',
+        {
+          full_name: userFullName,
+          movie_id: link,
+          email: userEmail,
+          movie_title: singleMovie.movie_title,
+          seats: selectedSeats,
+          price: singleMovie.price,
+          movie_date: singleMovie.movie_date,
+          time_start: singleMovie.time_start,
+          card_number: userCreditCardNumber,
+          card_expiration_date: userCardExpirationDate,
+          national_id: userNationalId,
+          ccv: userCcv,
         },
-      }
-    );
-    notyf.success(returnedData.data.message);
-    navigateToThankYouPage();
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie('tickets')}`,
+          },
+        }
+      );
+      notyf.success(returnedData.data.message);
+      navigateToThankYouPage();
+    } catch (err) {
+      notyf.error('server error, please try again');
+    }
   };
 
   return (

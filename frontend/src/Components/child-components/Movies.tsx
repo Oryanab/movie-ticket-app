@@ -109,7 +109,7 @@ export default function Movie() {
                   </>
                 </Form.Select>
                 <Button
-                  href={movieId.length > 0 ? `http://api:3000/tickets/${movieId}` : `http://api:3000/`}
+                  href={movieId.length > 0 ? `http://localhost:3000/tickets/${movieId}` : `http://localhost:3000/`}
                   style={{ marginTop: '1vh', fontSize: '1.6vh' }}
                   variant="primary"
                 >

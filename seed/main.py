@@ -12,7 +12,7 @@ class Seed():
         import json
         import requests
         movie_start_time_list = ["8:00", "12:00", "14:00", "18:00", "22:00"]
-        tomorrow = datetime(datetime.now().year, datetime.now().month, datetime.now().day + 1)
+        tomorrow = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
         for date in range(0, 5):
             for start_time in movie_start_time_list:
                 new_date = tomorrow + timedelta(days=date)
@@ -57,8 +57,10 @@ class Seed():
         print('Finished adding updated data')
 
 if __name__ == "__main__":
+    from datetime import datetime
     seed = Seed()
-    seed.drop_movies_table()
+    print(f"seeding process started at {datetime.now()}")
+    #seed.drop_movies_table()
     seed.start_seed()
 
 
