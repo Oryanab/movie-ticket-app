@@ -51,7 +51,7 @@ open up another terminal:
 
 #### Personal Ticket Hub:
 
-![Personal Ticket Hub](assets/single_ticket_hub_movie_ticket_app.png)
+![Personal Ticket Hub](assets/personal-ticket-hub-movie-ticket-app.png)
 
 ## Api Documentation:
 

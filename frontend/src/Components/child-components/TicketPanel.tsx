@@ -252,7 +252,7 @@ export default function TicketPanel() {
             </Form.Label>
             <br />
             <Form.Label>
-              Total Cost: <b>{singleTicket && Number(singleTicket.price) * singleTicket.seats.length}</b>
+              Total Cost: <b>{singleTicket && Number(singleTicket.price) * singleTicket.seats.length} ILS</b>
             </Form.Label>
             <br />
             <Form.Label>
