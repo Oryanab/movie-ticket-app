@@ -1,6 +1,6 @@
-# Welcome To My Movie Ticket App
+# Movie Ticket App
 
-## Lunch the app:
+## Launch the app:
 
 open up the docker-compose.yml file and replace the next fields with your actual data (in order to have mails sent from your mail account make sure to edit your email's access configurations):
 
