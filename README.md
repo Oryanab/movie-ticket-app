@@ -2,7 +2,7 @@
 
 ## Lunch the app:
 
-open up a docker-compose.yml and replace the next fields with your actual data (in order to have mails sent from your mail account make sure to edit your email's access configurations):
+open up the docker-compose.yml file and replace the next fields with your actual data (in order to have mails sent from your mail account make sure to edit your email's access configurations):
 
 ```
     MONGO_URI: *your-mongo-uri*
@@ -35,7 +35,7 @@ open up another terminal:
     4. Enter your payments info (demo, make sure to enter fake details but valid) and click "Complete Purchase"
     5. Your Order details will be sent be mail.
     6. in order to change seats or cancel your ticket feel free to enter "My Tickets" area with your personal order id.
-    7.The movies database will update everyday with new dates and movies
+    7. The movies database will update everyday with new dates and movies
     8. enjoy and feel free to note out every issue you have seen!
 ```
 
@@ -100,8 +100,17 @@ Content-Type: application/json
     "movie_date": string,
     "time_start": string
 }
+```
+
+```
 GET http://localhost:4000/api/movies/get-movies
+```
+
+```
 GET http://localhost:4000/api/movies/details/{movie_id}
+```
+
+```
 DELETE http://localhost:4000/api/movies/delete-movie/{movie_id}
 ```
 
@@ -116,6 +125,9 @@ Content-Type: application/json
     "email":string,
     "age": number
 }
+```
+
+```
 
 POST http://localhost:4000/api/tickets/verify
 Authorization: Bearer {string}
@@ -125,7 +137,9 @@ Content-Type: application/json
     "full_name":string,
     "email":string
 }
+```
 
+```
 POST http://localhost:4000/api/tickets/purchase-ticket
 Authorization: Bearer {string}
 Content-Type: application/json
@@ -146,8 +160,17 @@ Content-Type: application/json
     "national_id": string,
     "ccv": string
 }
+```
+
+```
 GET http://localhost:4000/api/tickets/view-tickets
+```
+
+```
 GET http://localhost:4000/api/tickets/view-ticket-details/{secret_id}
+```
+
+```
 PUT http://localhost:4000/api/tickets/change-seat
 Authorization: Bearer {string}
 Content-Type: application/json
@@ -164,7 +187,9 @@ Content-Type: application/json
     ],
     "orderId": string
 }
+```
 
+```
 DELETE http://localhost:4000/api/tickets/cancel-ticket
 Authorization: Bearer {string}
 Content-Type: application/json
