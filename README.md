@@ -1,6 +1,6 @@
-# Welcome To My Movie Ticket App
+# Movie Ticket App
 
-## Lunch the app:
+## Launch the app:
 
 open up the docker-compose.yml file and replace the next fields with your actual data (in order to have mails sent from your mail account make sure to edit your email's access configurations):
 
@@ -15,15 +15,6 @@ open up a terminal:
 
 ```
     docker-compose up --build
-```
-
-open up another terminal:
-
-```
-    1. docker exec -it seed /bin/bash
-    2. service cron start
-    3. python main.py
-    4. exit
 ```
 
 ## General Description:
