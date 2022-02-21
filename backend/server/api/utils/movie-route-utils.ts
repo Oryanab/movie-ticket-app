@@ -3,7 +3,7 @@ import Movie from '../../schemas/moviesSchema';
 export const returnAvailableSeats = () => {
   let AvailableSeats = [];
   const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-  for (let num = 1; num < 11; num++) {
+  for (let num = 1; num < 10; num++) {
     for (let char of letters) {
       AvailableSeats.push(`${num}${char}`);
     }

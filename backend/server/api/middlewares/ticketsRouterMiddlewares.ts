@@ -53,7 +53,7 @@ export const validateCreditCardDetails = (_req: Request, res: Response, next: Ne
   const { card_number, card_expiration_date, national_id, ccv } = _req.body;
   if (
     checkNumbersAndLengths(card_number, 16) &&
-    checkExpirationDate(new Date(`01/${card_expiration_date}`)) &&
+    checkExpirationDate(`01/${card_expiration_date}`, '00:00') &&
     checkNumbersAndLengths(national_id, 9) &&
     checkNumbersAndLengths(ccv, 3)
   ) {
@@ -81,7 +81,9 @@ export const checkSeatAvailability = async (_req: Request, res: Response, next: 
 export const checkMovieDateCompareToOrder = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const currentTicket: Tickets = await Ticket.findOne({ secret_key: _req.body.orderId });
-    checkExpirationDate(currentTicket.movie_date)
+    console.log(new Date(currentTicket.movie_date).toLocaleDateString(), currentTicket.time_start);
+
+    checkExpirationDate(new Date(currentTicket.movie_date).toLocaleDateString(), currentTicket.time_start)
       ? next()
       : res.status(403).json({ message: 'this action is no longer available' });
   } catch (err) {

@@ -133,8 +133,7 @@ export default function TicketPanel() {
       notyf.success(response.data.message);
       navigateToThankYouPage();
     } catch (err) {
-      notyf.error('This action is only valid 48 hours in before your movie starts');
-      notyf.error('otherwise, make sure you have inserted your verification code correctly');
+      notyf.error('Make sure you have inserted your verification code correctly');
     }
   };
 
