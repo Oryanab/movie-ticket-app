@@ -41,15 +41,15 @@ open up another terminal:
 
 ## View the app on `http://localhost:3000/`:
 
-##### Home Page:
+#### Home Page:
 
 ![Home Page](assets/homepage_movie_ticket_app.png)
 
-##### Single Movie Page:
+#### Single Movie Page:
 
 ![Single Movie Page](assets/single_page_movie_ticket_app.png)
 
-##### Personal Ticket Hub:
+#### Personal Ticket Hub:
 
 ![Personal Ticket Hub](assets/single_ticket_hub_movie_ticket_app.png)
 
@@ -126,7 +126,6 @@ Content-Type: application/json
     "email":string
 }
 
-###
 POST http://localhost:4000/api/tickets/purchase-ticket
 Authorization: Bearer {string}
 Content-Type: application/json
@@ -166,7 +165,6 @@ Content-Type: application/json
     "orderId": string
 }
 
-###
 DELETE http://localhost:4000/api/tickets/cancel-ticket
 Authorization: Bearer {string}
 Content-Type: application/json
