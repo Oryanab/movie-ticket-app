@@ -17,15 +17,6 @@ open up a terminal:
     docker-compose up --build
 ```
 
-open up another terminal:
-
-```
-    1. docker exec -it seed /bin/bash
-    2. service cron start
-    3. python main.py
-    4. exit
-```
-
 ## General Description:
 
 ```
