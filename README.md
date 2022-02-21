@@ -1,4 +1,4 @@
-# Welcome To My Movie Ticket Api
+# Welcome To My Movie Ticket App
 
 ## Lunch the app:
 
@@ -21,8 +21,8 @@ open up another terminal:
 
 ```
     1. docker exec -it seed /bin/bash
-    2. python main.py
-    3. service cron start
+    2. service cron start
+    3. python main.py
     4. exit
 ```
 
@@ -54,3 +54,130 @@ open up another terminal:
 ![Personal Ticket Hub](assets/single_ticket_hub_movie_ticket_app.png)
 
 ## Api Documentation:
+
+### Movie endpoints
+
+```
+BASE URL http://localhost:4000/api
+```
+
+```
+GET /movies/get-movies
+GET /movies/details/{movie_id}
+POST /movies/add-movie
+DELETE /movies/delete-movie/{movie_id}
+
+```
+
+### Ticket endpoints
+
+```
+GET /tickets/view-tickets
+GET /tickets/view-ticket-details/{secret_id}
+POST /api/tickets/get-verification
+POST /api/tickets/verify
+POST /api/tickets/purchase-ticket
+PUT /api/tickets/change-seat
+DELETE /api/tickets/cancel-ticket
+
+```
+
+### General usage Movie endpoints
+
+```
+POST http://localhost:4000/api/movies/add-movie
+Content-Type: application/json
+
+{
+    "movie_title": string,
+    "img": string,
+    "trailer": string,
+    "genres": [
+        type: string
+    ],
+    "description": string,
+    "price": number,
+    "movie_date": string,
+    "time_start": string
+}
+GET http://localhost:4000/api/movies/get-movies
+GET http://localhost:4000/api/movies/details/{movie_id}
+DELETE http://localhost:4000/api/movies/delete-movie/{movie_id}
+```
+
+### General usage Movie endpoints
+
+```
+POST http://localhost:4000/api/tickets/get-verification
+Content-Type: application/json
+
+{
+    "full_name":string,
+    "email":string,
+    "age": number
+}
+
+POST http://localhost:4000/api/tickets/verify
+Authorization: Bearer {string}
+Content-Type: application/json
+
+{
+    "full_name":string,
+    "email":string
+}
+
+###
+POST http://localhost:4000/api/tickets/purchase-ticket
+Authorization: Bearer {string}
+Content-Type: application/json
+
+{
+    "full_name": string,
+    "movie_id": string,
+    "email": string,
+    "movie_title": string,
+    "seats": [
+        type: string
+    ],
+    "price": number,
+    "movie_date": string,
+    "time_start": string,
+    "card_number": string,
+    "card_expiration_date": string,
+    "national_id": string,
+    "ccv": string
+}
+GET http://localhost:4000/api/tickets/view-tickets
+GET http://localhost:4000/api/tickets/view-ticket-details/{secret_id}
+PUT http://localhost:4000/api/tickets/change-seat
+Authorization: Bearer {string}
+Content-Type: application/json
+
+{
+    "movieId": string,
+    "full_name": string,
+    "email": string,
+    "prevSeats": [
+        type: string
+    ],
+    "seats": [
+        type: string
+    ],
+    "orderId": string
+}
+
+###
+DELETE http://localhost:4000/api/tickets/cancel-ticket
+Authorization: Bearer {string}
+Content-Type: application/json
+
+{
+    "movieId": string,
+    "full_name": string,
+    "email": string,
+    "seats":[
+        type: string
+    ],
+    "orderId": string
+}
+```
