@@ -11,4 +11,14 @@
 
 ## View the app on `http://localhost:3000/`:
 
-![homepage movie ticket app](assets/homepage_movie_ticket_app.png)
+##### Home Page:
+
+![Home Page](assets/homepage_movie_ticket_app.png)
+
+##### Single Movie Page:
+
+![Single Movie Page](assets/single_page_movie_ticket_app.png)
+
+##### Personal Ticket Hub:
+
+![Personal Ticket Hub](assets/single_ticket_hub_movie_ticket_app.png)
