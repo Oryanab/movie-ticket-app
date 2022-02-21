@@ -11,22 +11,27 @@ class Seed():
         from datetime import datetime, timedelta
         import json
         import requests
+        import pymongo
+        my_client = pymongo.MongoClient("mongodb://root:example@mongo:27017/MovieDb?authSource=admin")
+        database = my_client["MovieDb"]
+        collection = database["movies"]
         movie_start_time_list = ["8:00", "12:00", "14:00", "18:00", "22:00"]
         tomorrow = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
-        for date in range(0, 5):
+        for date in range(0, 6):
             for start_time in movie_start_time_list:
                 new_date = tomorrow + timedelta(days=date)
-                seed_api = requests.post("http://api:4000/api/movies/add-movie", data=json.dumps({
-                    "movie_title": movie_title,
-                    "img": image,
-                    "trailer": trailer_link,
-                    "genres": genres,
-                    "description": description,
-                    "price": price,
-                    "movie_date": new_date,
-                    "time_start": start_time
-                }, default=str), headers={"Content-Type": "application/json"})
-                print(seed_api.text)
+                if not collection.find_one({"movie_title":movie_title, "movie_date":new_date, "time_start":start_time}):
+                    seed_api = requests.post("http://api:4000/api/movies/add-movie", data=json.dumps({
+                        "movie_title": movie_title,
+                        "img": image,
+                        "trailer": trailer_link,
+                        "genres": genres,
+                        "description": description,
+                        "price": price,
+                        "movie_date": new_date,
+                        "time_start": start_time
+                    }, default=str), headers={"Content-Type": "application/json"})
+                    print(seed_api.text)
 
     def get_movies_trailer(self,movie_link, movie_title):
         import requests
