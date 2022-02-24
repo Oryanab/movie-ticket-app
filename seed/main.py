@@ -1,11 +1,21 @@
 class Seed():
-    def drop_movies_table(self):
+    def remove_irrelevant_movies_and_tickets(self):
         import pymongo
+        import datetime
         my_client = pymongo.MongoClient("mongodb://root:example@mongo:27017/MovieDb?authSource=admin")
         database = my_client["MovieDb"]
-        collection = database["movies"]
-        collection.drop()
-        print('Deleted Previous Data')
+        collectionMovies = database["movies"]
+        collectionTickets = database["tickets"]
+        for movie in collectionMovies.find():
+            movie_exact_time = movie["time_start"].split(":") 
+            if movie["movie_date"].replace(hour=int(movie_exact_time[0]), minute=int(movie_exact_time[1])) < datetime.datetime.now():
+                collectionMovies.find_one_and_delete({"_id": movie["_id"]})
+                print(movie["movie_date"], movie["time_start"])
+        for ticket in collectionTickets.find():
+            ticket_exact_time = ticket["time_start"].split(":") 
+            if ticket["movie_date"].replace(hour=int(ticket_exact_time[0]), minute=int(ticket_exact_time[1])) < datetime.datetime.now():
+                collectionTickets.find_one_and_delete({"_id": ticket["_id"]})
+                print(ticket["movie_date"], ticket["time_start"])
 
     def getAllDatesOfMovies(self, movie_title, image, trailer_link,genres, description, price):
         from datetime import datetime, timedelta
@@ -20,7 +30,8 @@ class Seed():
         for date in range(0, 5):
             for start_time in movie_start_time_list:
                 new_date = tomorrow + timedelta(days=date)
-                if not collection.find_one({"movie_title":movie_title, "movie_date":new_date, "time_start":start_time}):
+                movie_exact_time = start_time.split(":")  
+                if not collection.find_one({"movie_title":movie_title, "movie_date":new_date, "time_start":start_time}) and new_date.replace(hour=int(movie_exact_time[0]), minute=int(movie_exact_time[1])) > datetime.now():
                     seed_api = requests.post("http://api:4000/api/movies/add-movie", data=json.dumps({
                         "movie_title": movie_title,
                         "img": image,
@@ -65,8 +76,12 @@ if __name__ == "__main__":
     from datetime import datetime
     seed = Seed()
     print(f"seeding process started at {datetime.now()}")
-    #seed.drop_movies_table()
     seed.start_seed()
+    print(f"seeding process finish at {datetime.now()}")
+    print(f"deleteing past events process started at {datetime.now()}")
+    seed.remove_irrelevant_movies_and_tickets()
+    print(f"deleteing past events process finish at {datetime.now()}")
+    
 
 
 

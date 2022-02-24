@@ -23,6 +23,8 @@ services:
       MY_EMAIL_ADDR: *your-email-address*
       MY_EMAIL_PASS: *your-email's-password*
       SECRET: *64-bit-hash-key*
+    depends_on:
+      - mongo
     ports:
       - 4000:4000
     networks:
@@ -32,7 +34,7 @@ services:
     container_name: seed
     build: ./seed
     depends_on:
-      - mongo
+      - api
     networks:
       - lognet
 

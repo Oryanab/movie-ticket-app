@@ -9,7 +9,7 @@ export const generateSecretKey = (): string => {
 
 export const generateVerificationKey = (full_name: string, email: string) => {
   const accessToken = jwt.sign({ full_name, email }, process.env.SECRET!, {
-    expiresIn: '30m',
+    expiresIn: '10m',
   });
   return accessToken;
 };
