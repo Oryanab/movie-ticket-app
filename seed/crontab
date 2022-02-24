@@ -1,2 +1,2 @@
-* * */1 * * root /usr/local/bin/python /main.py >> /var/log/cron.log 2>&1
+*/1 * * * * root /usr/local/bin/python /main.py >> /var/log/cron.log 2>&1
 # new line

@@ -81,8 +81,6 @@ export const checkSeatAvailability = async (_req: Request, res: Response, next: 
 export const checkMovieDateCompareToOrder = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const currentTicket: Tickets = await Ticket.findOne({ secret_key: _req.body.orderId });
-    console.log(new Date(currentTicket.movie_date).toLocaleDateString(), currentTicket.time_start);
-
     checkExpirationDate(new Date(currentTicket.movie_date).toLocaleDateString(), currentTicket.time_start)
       ? next()
       : res.status(403).json({ message: 'this action is no longer available' });

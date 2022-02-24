@@ -17,7 +17,7 @@ class Seed():
         collection = database["movies"]
         movie_start_time_list = ["8:00", "12:00", "14:00", "18:00", "22:00"]
         tomorrow = datetime(datetime.now().year, datetime.now().month, datetime.now().day)
-        for date in range(0, 6):
+        for date in range(0, 5):
             for start_time in movie_start_time_list:
                 new_date = tomorrow + timedelta(days=date)
                 if not collection.find_one({"movie_title":movie_title, "movie_date":new_date, "time_start":start_time}):

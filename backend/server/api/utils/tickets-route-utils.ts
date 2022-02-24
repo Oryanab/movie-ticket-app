@@ -45,16 +45,9 @@ export const AddTicket = async (
   }
 };
 
-const reverseDate = (date: string) => {
-  const day = date.split('/')[0];
-  const month = date.split('/')[1];
-  const year = date.split('/')[2];
-  return `${month}/${day}/${year}`;
-};
-
 // Check Card Expiration Date
 export const checkExpirationDate = (movie_date: string, time_start: String) => {
-  if (new Date() <= new Date(`${reverseDate(movie_date)} ${time_start}`)) {
+  if (new Date() <= new Date(`${movie_date} ${time_start}`)) {
     return true;
   }
   return false;

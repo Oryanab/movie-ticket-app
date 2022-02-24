@@ -185,6 +185,19 @@ export default function SingleMoviePage() {
               : 'loading...'}
           </>
         </div>
+        <div
+          style={{
+            borderRadius: '5px',
+            backgroundColor: 'black',
+            color: 'white',
+            textAlign: 'center',
+            width: '50%',
+            marginTop: '1vh',
+          }}
+        >
+          <h4>Screen</h4>
+        </div>
+
         <br />
       </div>
       <div style={{ backgroundColor: 'white', padding: '5vw', margin: '1vw', borderRadius: '1vh', width: '50%' }}>
@@ -243,11 +256,23 @@ export default function SingleMoviePage() {
             <div style={{ display: selectedSeats.length > 0 ? 'block' : 'none' }}>
               <h5>Verify Email for Receipt:</h5>
               <Form.Label>Full Name:</Form.Label>
-              <Form.Control onChange={e => setUserFullName(e.target.value)} type="text" placeholder="full name" />
+              <Form.Control
+                onChange={e => setUserFullName(e.target.value.trim())}
+                type="text"
+                placeholder="full name"
+              />
               <Form.Label>Email address</Form.Label>
-              <Form.Control onChange={e => setUserEmail(e.target.value)} type="email" placeholder="name@example.com" />
+              <Form.Control
+                onChange={e => setUserEmail(e.target.value.trim())}
+                type="email"
+                placeholder="name@example.com"
+              />
               <Form.Label>Age (cannot purchase if not over 18:)</Form.Label>
-              <Form.Control onChange={e => setUserAge(Number(e.target.value))} type="number" placeholder="your age" />
+              <Form.Control
+                onChange={e => setUserAge(Number(e.target.value.trim()))}
+                type="number"
+                placeholder="your age"
+              />
               <Button
                 style={{ marginTop: '2vh' }}
                 onClick={e => {
@@ -272,7 +297,7 @@ export default function SingleMoviePage() {
                 We have send a Verification code to {userEmail}, please paste the code to verify your email address:
               </Form.Label>
               <Form.Control
-                onChange={e => setUserVerificationKey(e.target.value)}
+                onChange={e => setUserVerificationKey(e.target.value.trim())}
                 type="text"
                 placeholder="paste your Verification code"
               />
@@ -294,20 +319,24 @@ export default function SingleMoviePage() {
               <br />
               <Form.Label>National Id:</Form.Label>
               <Form.Control
-                onChange={e => setUserNationalId(e.target.value)}
+                onChange={e => setUserNationalId(e.target.value.trim())}
                 type="text"
                 placeholder="enter your national id"
               />
               <Form.Label>Credit Card Number:</Form.Label>
               <Form.Control
-                onChange={e => setUserCreditCardNumber(e.target.value)}
+                onChange={e => setUserCreditCardNumber(e.target.value.trim())}
                 type="text"
                 placeholder="**** **** **** ****"
               />
               <Form.Label>Card Expiration Date:</Form.Label>
-              <Form.Control onChange={e => setUserCardExpirationDate(e.target.value)} type="text" placeholder="MM/YY" />
+              <Form.Control
+                onChange={e => setUserCardExpirationDate(e.target.value.trim())}
+                type="text"
+                placeholder="MM/YY"
+              />
               <Form.Label>CCV:</Form.Label>
-              <Form.Control onChange={e => setUserCcv(e.target.value)} type="text" placeholder="***" />
+              <Form.Control onChange={e => setUserCcv(e.target.value.trim())} type="text" placeholder="***" />
               <Button
                 onClick={e => {
                   sendPaymentDetails();

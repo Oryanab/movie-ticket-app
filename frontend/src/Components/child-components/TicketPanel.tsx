@@ -1,5 +1,5 @@
 // Imports
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Badge } from 'react-bootstrap';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -152,6 +152,10 @@ export default function TicketPanel() {
 
   // Seats singleTicket &&
   const allSeats = [...singleMovie.taken_sits, ...singleMovie.available_sits].sort();
+  const taken_sits: Array<string> = singleMovie.taken_sits;
+  const mySeats: Array<string> = singleTicket.seats;
+  const [user_seats, setUser_seats] = useState<Array<string>>(singleTicket.seats);
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <div
@@ -163,7 +167,7 @@ export default function TicketPanel() {
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
             <Form.Label>Order Id:</Form.Label>
             <Form.Control
-              onChange={e => setUserOrderId(e.target.value)}
+              onChange={e => setUserOrderId(e.target.value.trim())}
               type="text"
               placeholder="********-****-****-****-************"
             />
@@ -186,15 +190,13 @@ export default function TicketPanel() {
               {singleMovie &&
                 allSeats.map((seat: string) => {
                   if (seat === 'undefined') return;
-                  const taken_sits: Array<string> = singleMovie.taken_sits;
-                  const user_sits: Array<string> = singleTicket.seats;
                   const cursor = singleMovie.taken_sits.includes(seat) ? 'not-allowed' : 'pointer';
-                  const background = user_sits.includes(seat) ? 'orange' : taken_sits.includes(seat) ? 'red' : 'blue';
+                  const background = mySeats.includes(seat) ? 'orange' : taken_sits.includes(seat) ? 'red' : 'blue';
 
                   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-                    if (taken_sits.includes(seat) && !user_sits.includes(seat)) notyf.error(`seat ${seat} is taken`);
+                    if (taken_sits.includes(seat) && !user_seats.includes(seat)) notyf.error(`seat ${seat} is taken`);
                     else {
-                      if (background === 'blue' && selectedSeats.length < user_sits.length) {
+                      if (background === 'blue' && selectedSeats.length < user_seats.length) {
                         setSelectedSeats([...selectedSeats, seat]);
                         document.getElementById(seat)!.style.backgroundColor = 'green';
                       } else {
@@ -226,6 +228,18 @@ export default function TicketPanel() {
                   );
                 })}
             </>
+          </div>
+          <div
+            style={{
+              borderRadius: '5px',
+              backgroundColor: 'black',
+              color: 'white',
+              textAlign: 'center',
+              width: '50%',
+              marginTop: '1vh',
+            }}
+          >
+            <h4>Screen</h4>
           </div>
           <br />
         </div>
@@ -264,7 +278,26 @@ export default function TicketPanel() {
                   </Badge>
                 ))}
               </>
-            </Form.Label>
+            </Form.Label>{' '}
+            <br />
+            <button
+              onClick={e => {
+                e.preventDefault();
+
+                setSelectedSeats([...singleTicket.seats]);
+                setUser_seats([...singleTicket.seats]);
+                for (const seat of allSeats) {
+                  const currentSeat = document.getElementById(seat);
+                  if (currentSeat) {
+                    if (currentSeat.style.backgroundColor == 'green') currentSeat.style.backgroundColor = 'blue';
+                    else if (user_seats.includes(seat)) currentSeat.style.backgroundColor = 'orange';
+                  }
+                }
+              }}
+              style={{ marginBottom: '1vh' }}
+            >
+              Start/Restart Selection
+            </button>
             <h5>Select Action:</h5>
             <Form.Select
               onChange={e => {
@@ -317,7 +350,7 @@ export default function TicketPanel() {
                 verify your email address:
               </Form.Label>
               <Form.Control
-                onChange={e => setUserVerificationKey(e.target.value)}
+                onChange={e => setUserVerificationKey(e.target.value.trim())}
                 type="text"
                 placeholder="paste your Verification code"
               />
