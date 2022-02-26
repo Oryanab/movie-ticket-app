@@ -184,7 +184,26 @@ export default function TicketPanel() {
           </Form.Group>
         </Form>
         <div style={{ display: showSeatSection }}>
-          <h2>Choose Seat</h2>
+          <h2>Change Seats</h2>
+          <button
+            onClick={e => {
+              e.preventDefault();
+
+              setSelectedSeats([...singleTicket.seats]);
+              setUser_seats([...singleTicket.seats]);
+              for (const seat of allSeats) {
+                const currentSeat = document.getElementById(seat);
+                if (currentSeat) {
+                  if (currentSeat.style.backgroundColor == 'green') currentSeat.style.backgroundColor = 'blue';
+                  else if (user_seats.includes(seat)) currentSeat.style.backgroundColor = 'orange';
+                }
+              }
+            }}
+            style={{ marginBottom: '1vh', fontSize: '1.3vh', marginLeft: '12.5%' }}
+          >
+            Enable Selection/Reset Selection
+          </button>
+          <br />
           <div style={{ display: 'inline-grid', gridTemplateColumns: 'auto auto auto auto auto auto auto auto' }}>
             <>
               {singleMovie &&
@@ -280,24 +299,6 @@ export default function TicketPanel() {
               </>
             </Form.Label>{' '}
             <br />
-            <button
-              onClick={e => {
-                e.preventDefault();
-
-                setSelectedSeats([...singleTicket.seats]);
-                setUser_seats([...singleTicket.seats]);
-                for (const seat of allSeats) {
-                  const currentSeat = document.getElementById(seat);
-                  if (currentSeat) {
-                    if (currentSeat.style.backgroundColor == 'green') currentSeat.style.backgroundColor = 'blue';
-                    else if (user_seats.includes(seat)) currentSeat.style.backgroundColor = 'orange';
-                  }
-                }
-              }}
-              style={{ marginBottom: '1vh' }}
-            >
-              Start/Restart Selection
-            </button>
             <h5>Select Action:</h5>
             <Form.Select
               onChange={e => {

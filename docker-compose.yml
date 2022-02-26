@@ -25,6 +25,7 @@ services:
       SECRET: *64-bit-hash-key*
     depends_on:
       - mongo
+      - mongo-express
     ports:
       - 4000:4000
     networks:
@@ -34,7 +35,7 @@ services:
     container_name: seed
     build: ./seed
     depends_on:
-      - api
+      - mongo
     networks:
       - lognet
 

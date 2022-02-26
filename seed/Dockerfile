@@ -1,13 +1,12 @@
 FROM python:latest
 
 # Add crontab file in the cron directory
-ADD crontab /etc/cron.d/crontab
+RUN touch /etc/cron.d/crontab
 COPY . .
-RUN pip install -r requirements.txt
-# Give execution rights on the cron job
-
+RUN ./entrypoint.sh
 # Create the log file to be able to run tail
 RUN touch /var/log/cron.log
+RUN pip install -r requirements.txt
 
 #Install Cron
 RUN apt-get update
